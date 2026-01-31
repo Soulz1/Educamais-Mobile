@@ -1,3 +1,58 @@
+# EducaMais Mobile
+
+Mobile client for the EducaMais platform (Expo / React Native).
+
+## Requisitos
+- Node.js (v18+ recommended)
+- npm ou yarn
+- Expo CLI (`npm i -g expo-cli`) opcional, mas útil
+
+## Instalação
+
+1. Instalar dependências
+
+```bash
+npm ci
+# ou
+npm install
+```
+
+2. Iniciar o Metro/Expo
+
+```bash
+npm run start
+# Para Android
+npm run android
+# Para iOS
+npm run ios
+```
+
+## Variáveis de ambiente
+O app consome a API a partir da variável `EXPO_PUBLIC_API_URL`. Por padrão o código usa um IP local. Para apontar para sua API, exporte a variável antes de iniciar o Expo, por exemplo:
+
+Windows (PowerShell):
+
+```powershell
+$env:EXPO_PUBLIC_API_URL = "http://192.168.0.100:3333"
+npm run start
+```
+
+macOS / Linux:
+
+```bash
+export EXPO_PUBLIC_API_URL="http://192.168.0.100:3333"
+npm run start
+```
+
+## Lint
+
+```bash
+npm run lint
+```
+
+## Observações
+- O projeto é um cliente Expo; caso precise compilar para produção, siga a documentação do Expo.
+- Backend não está incluído neste repositório. Se você tiver o backend local, assegure-se de que o `EXPO_PUBLIC_API_URL` aponte para ele.
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
