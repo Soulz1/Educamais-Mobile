@@ -1,74 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
-  Alert,
   ScrollView,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { postService } from '../../../src/services/postService';
-
-interface Post {
-  id: number;
-  titulo: string;
-  conteudo: string;
-  autorId: string;
-  createdAt: string;
-  atualizacao: string;
-  autor?: {
-    name: string;
-    email: string;
-    appRole?: string;
-  };
-}
+import { usePost } from '../../../src/hooks/usePosts';
+import { Loader, ErrorState } from '../../../src/components/common';
 
 function PostDetail() {
   const navigation = useNavigation<any>();
   const route = useRoute();
   const postId = (route.params as any)?.postId;
 
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: post, isLoading, isError, error, refetch } = usePost(postId);
 
-  useEffect(() => {
-    loadPost();
-  }, [postId]);
-
-  const loadPost = async () => {
-    try {
-      setLoading(true);
-      console.log('📝 Carregando post com ID:', postId);
-      const postData = await postService.getPostById(postId);
-      console.log('✅ Post carregado:', JSON.stringify(postData, null, 2));
-      setPost(postData);
-    } catch (error) {
-      console.error('❌ Erro ao carregar post:', error);
-      Alert.alert('Erro', 'Não foi possível carregar o post');
-      if (navigation.canGoBack && navigation.canGoBack()) {
-        navigation.goBack();
-      } else {
-        navigation.navigate('screens/Home/index' as any);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <Loader />
       </View>
     );
   }
 
-  if (!post) {
+  if (isError || !post) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Post não encontrado</Text>
+        <ErrorState
+          message={(error as any)?.message || 'Post não encontrado'}
+          onRetry={() => refetch()}
+        />
       </View>
     );
   }
@@ -118,6 +81,14 @@ function PostDetail() {
         {/* Divisor */}
         <View style={styles.divider} />
 
+        {/* Descrição (se houver) */}
+        {post.descricao && (
+          <>
+            <Text style={styles.descricao}>{post.descricao}</Text>
+            <View style={styles.divider} />
+          </>
+        )}
+
         {/* Conteúdo */}
         <Text style={styles.conteudo}>{post.conteudo}</Text>
 
@@ -131,6 +102,12 @@ function PostDetail() {
               Atualizado em: {new Date(post.atualizacao).toLocaleDateString('pt-BR')}
             </Text>
           )}
+        </View>
+
+        {/* TODO: Comments section - placeholder for future implementation */}
+        <View style={styles.commentsPlaceholder}>
+          <Text style={styles.commentsTitle}>💬 Comentários</Text>
+          <Text style={styles.commentsText}>Em breve: Seção de comentários</Text>
         </View>
       </View>
     </ScrollView>
@@ -204,6 +181,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0e0e0',
     marginVertical: 16,
   },
+  descricao: {
+    fontSize: 15,
+    color: '#666',
+    lineHeight: 22,
+    fontStyle: 'italic',
+  },
   conteudo: {
     fontSize: 16,
     color: '#333',
@@ -216,15 +199,29 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderLeftWidth: 4,
     borderLeftColor: '#007AFF',
+    marginBottom: 24,
   },
   metadataText: {
     fontSize: 11,
     color: '#999',
     marginBottom: 4,
   },
-  errorText: {
+  commentsPlaceholder: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderStyle: 'dashed',
+  },
+  commentsTitle: {
     fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  commentsText: {
+    fontSize: 14,
     color: '#999',
-    textAlign: 'center',
   },
 });
