@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { postService } from '../services/postService';
-import type { Post, PostFormData } from '../types/models';
+import type { PostFormData } from '../types/models';
 
 // Query keys
 export const postKeys = {

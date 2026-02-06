@@ -12,14 +12,13 @@ import { useNavigation } from '@react-navigation/native';
 import { usePosts, useDeletePost } from '../../../hooks/usePosts';
 import { useAuth } from '../../../contexts/AuthContext';
 import Loader from '../../../components/common/Loader';
-import ErrorState from '../../../components/common/ErrorState';
 import EmptyState from '../../../components/common/EmptyState';
 import type { Post } from '../../../types/models';
 
 export default function AdminPostsListScreen() {
   const navigation = useNavigation<any>();
   const { isTeacher } = useAuth();
-  const { data: posts, isLoading, error, refetch } = usePosts(1, 50);
+  const { data: posts, isLoading } = usePosts(1, 50);
   const deletePostMutation = useDeletePost();
 
   // Guard: Only teachers can access this screen
@@ -28,7 +27,7 @@ export default function AdminPostsListScreen() {
       Alert.alert('Acesso negado', 'Apenas professores podem acessar esta área.');
       navigation.goBack();
     }
-  }, [isTeacher]);
+  }, [isTeacher, navigation]);
 
   const handleDelete = (postId: number, titulo: string) => {
     Alert.alert(
@@ -43,7 +42,7 @@ export default function AdminPostsListScreen() {
             try {
               await deletePostMutation.mutateAsync(postId);
               Alert.alert('Sucesso', 'Post excluído com sucesso');
-            } catch (error) {
+            } catch {
               Alert.alert('Erro', 'Não foi possível excluir o post');
             }
           },
@@ -89,10 +88,6 @@ export default function AdminPostsListScreen() {
 
   if (isLoading) {
     return <Loader />;
-  }
-
-  if (error) {
-    return <ErrorState message="Erro ao carregar posts" onRetry={refetch} />;
   }
 
   return (

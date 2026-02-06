@@ -41,7 +41,7 @@ export default function AdminPostCreateScreen() {
       Alert.alert('Acesso negado', 'Apenas professores podem criar posts.');
       navigation.goBack();
     }
-  }, [isTeacher]);
+  }, [isTeacher, navigation]);
 
   const onSubmit = async (data: PostFormData) => {
     try {

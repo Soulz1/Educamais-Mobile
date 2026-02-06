@@ -106,7 +106,7 @@ class AuthService {
       await this.api.post('/sign-out');
       await SecureStore.deleteItemAsync(this.sessionKey);
       this.setAuthToken(null);
-    } catch (error) {
+    } catch {
       // Mesmo se falhar na API, limpar local
       await SecureStore.deleteItemAsync(this.sessionKey);
       this.setAuthToken(null);
@@ -154,7 +154,7 @@ class AuthService {
    * Tratar erros de forma legível
    */
   private handleError(error: any): Error {
-    if (axios.isAxiosError(error)) {
+    if (error?.isAxiosError) {
       const message = error.response?.data?.message || error.message;
       return new Error(message);
     }

@@ -48,7 +48,7 @@ export default function AdminPostEditScreen() {
       Alert.alert('Acesso negado', 'Apenas professores podem editar posts.');
       navigation.goBack();
     }
-  }, [isTeacher]);
+  }, [isTeacher, navigation]);
 
   // Load post data into form
   useEffect(() => {
