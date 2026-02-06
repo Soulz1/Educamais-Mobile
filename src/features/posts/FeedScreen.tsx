@@ -9,7 +9,8 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../routes/app.routes';
 import { useAuth } from '../../../src/contexts/AuthContext';
 import { useInfinitePosts } from '../../../src/hooks/usePosts';
 import { useDebounce } from '../../../src/hooks/useDebounce';
@@ -19,7 +20,7 @@ import ErrorState from '../../../src/components/common/ErrorState';
 import type { Post } from '../../../src/types/models';
 
 function FeedScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { user, logout, isTeacher } = useAuth();
   const displayName = user?.name ? user.name.split(' ')[0] : 'Usuário';
   
@@ -58,13 +59,13 @@ function FeedScreen() {
       );
       return;
     }
-    navigation.navigate('AdminPostsList' as any);
+    navigation.navigate('AdminPostsList');
   };
 
   const renderPostItem = ({ item }: { item: Post }) => (
     <TouchableOpacity
       style={styles.postCard}
-      onPress={() => navigation.navigate('screens/PostDetail/index' as any, { postId: item.id })}
+      onPress={() => navigation.navigate('screens/PostDetail/index', { postId: item.id })}
       activeOpacity={0.8}
       hitSlop={{ top: 12, left: 12, right: 12, bottom: 12 }}
       accessibilityRole="button"

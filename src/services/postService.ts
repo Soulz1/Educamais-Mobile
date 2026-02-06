@@ -1,29 +1,5 @@
 import api from './api';
-
-interface Post {
-  id: number;
-  titulo: string;
-  conteudo: string;
-  autorId: string;
-  createdAt: string;
-  atualizacao: string;
-  autor?: {
-    name: string;
-    email: string;
-    appRole?: string;
-  };
-}
-
-interface PostsResponse {
-  success: boolean;
-  data: Post[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    pages: number;
-  };
-}
+import type { Post, PostsResponse } from '../types/models';
 
 class PostService {
   /**
