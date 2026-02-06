@@ -1,72 +1,43 @@
-import axios, { AxiosInstance } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.15.5:3333';
+import { api } from './api';
+import { storageService } from './storage';
+import { AuthResponse, UserSession, ApiError } from '../types/models';
 
 interface AuthCredentials {
   email: string;
   password: string;
 }
 
-interface AuthResponse {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    appRole?: string;
-  };
-  token: string;
-}
-
-interface UserSession {
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    appRole?: string;
-  };
-  sessionToken: string;
+interface SignUpCredentials extends AuthCredentials {
+  name?: string;
 }
 
 class AuthService {
-  private api: AxiosInstance;
-  private sessionKey = '@educamais_session';
-
-  constructor() {
-    this.api = axios.create({
-      baseURL: `${API_URL}/api/auth`,
-      withCredentials: true,
-    });
-  }
+  private authApi = api;
 
   /**
    * Fazer cadastro (Sign Up) com email e senha
    */
-  async signUp(credentials: AuthCredentials): Promise<UserSession> {
+  async signUp(credentials: SignUpCredentials): Promise<UserSession> {
     try {
-      const response = await this.api.post<AuthResponse>('/sign-up/email', {
+      const response = await this.authApi.post<AuthResponse>('/auth/sign-up/email', {
         email: credentials.email,
         password: credentials.password,
-        name: credentials.email.split('@')[0],
+        name: credentials.name || credentials.email.split('@')[0],
       });
 
-      console.log('SignUp Response:', JSON.stringify(response.data, null, 2)); // DEBUG
+      console.log('SignUp Response:', JSON.stringify(response.data, null, 2));
 
       const sessionData: UserSession = {
         user: response.data.user,
         sessionToken: response.data.token,
       };
 
-      // Salvar sessão no AsyncStorage
-      await AsyncStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
-      console.log('✅ Session saved to AsyncStorage (SignUp)'); // DEBUG
-
-      // Atualizar header padrão com token
-      this.setAuthToken(sessionData.sessionToken);
+      // Save session to SecureStore
+      await storageService.saveSession(sessionData);
 
       return sessionData;
     } catch (error) {
-      throw this.handleError(error);
+      throw error as ApiError;
     }
   }
 
@@ -75,25 +46,21 @@ class AuthService {
    */
   async signIn(credentials: AuthCredentials): Promise<UserSession> {
     try {
-      const response = await this.api.post<AuthResponse>('/sign-in/email', credentials);
+      const response = await this.authApi.post<AuthResponse>('/auth/sign-in/email', credentials);
 
-      console.log('SignIn Response:', JSON.stringify(response.data, null, 2)); // DEBUG
+      console.log('SignIn Response:', JSON.stringify(response.data, null, 2));
 
       const sessionData: UserSession = {
         user: response.data.user,
         sessionToken: response.data.token,
       };
 
-      // Salvar sessão no AsyncStorage
-      await AsyncStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
-      console.log('✅ Session saved to AsyncStorage (SignIn)'); // DEBUG
-
-      // Atualizar header padrão com token
-      this.setAuthToken(sessionData.sessionToken);
+      // Save session to SecureStore
+      await storageService.saveSession(sessionData);
 
       return sessionData;
     } catch (error) {
-      throw this.handleError(error);
+      throw error as ApiError;
     }
   }
 
@@ -102,13 +69,12 @@ class AuthService {
    */
   async logout(): Promise<void> {
     try {
-      await this.api.post('/sign-out');
-      await AsyncStorage.removeItem(this.sessionKey);
-      this.setAuthToken(null);
+      await this.authApi.post('/auth/sign-out');
     } catch (error) {
-      // Mesmo se falhar na API, limpar local
-      await AsyncStorage.removeItem(this.sessionKey);
-      this.setAuthToken(null);
+      console.error('Error during API logout:', error);
+    } finally {
+      // Always clear local session
+      await storageService.clearSession();
     }
   }
 
@@ -116,48 +82,28 @@ class AuthService {
    * Verificar se há sessão salva
    */
   async getSession(): Promise<UserSession | null> {
-    try {
-      const sessionData = await AsyncStorage.getItem(this.sessionKey);
-      console.log('Session from AsyncStorage:', sessionData); // DEBUG
-      if (sessionData) {
-        const session = JSON.parse(sessionData) as UserSession;
-        this.setAuthToken(session.sessionToken);
-        return session;
-      }
-      return null;
-    } catch (error) {
-      console.error('Erro ao recuperar sessão:', error);
-      return null;
-    }
+    return await storageService.getSession();
   }
 
   /**
-   * Atualizar token no header
+   * Check if user has a specific role
    */
-  private setAuthToken(token: string | null): void {
-    if (token) {
-      this.api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    } else {
-      delete this.api.defaults.headers.common['Authorization'];
-    }
+  hasRole(session: UserSession | null, role: string): boolean {
+    return session?.user?.appRole === role;
   }
 
   /**
-   * Obter instância do axios configurada
+   * Check if user is a teacher
    */
-  getApiInstance(): AxiosInstance {
-    return this.api;
+  isTeacher(session: UserSession | null): boolean {
+    return this.hasRole(session, 'teacher');
   }
 
   /**
-   * Tratar erros de forma legível
+   * Check if user is a student
    */
-  private handleError(error: any): Error {
-    if (axios.isAxiosError(error)) {
-      const message = error.response?.data?.message || error.message;
-      return new Error(message);
-    }
-    return error;
+  isStudent(session: UserSession | null): boolean {
+    return this.hasRole(session, 'student');
   }
 }
 

@@ -1,105 +1,245 @@
 # EducaMais Mobile
 
-Mobile client for the EducaMais platform (Expo / React Native).
+Mobile client for the EducaMais platform built with Expo / React Native.
 
-## Requisitos
+## 📋 Features
+
+- ✅ Authentication (Login/Sign Up with secure token storage)
+- ✅ Posts Feed with search and infinite scroll
+- ✅ Post Details
+- ✅ Admin Panel for Teachers (Create/Edit/Delete Posts)
+- ✅ Role-based access control (Teacher/Student)
+- 🔄 Scaffolding for Teachers and Students CRUD (coming in future PRs)
+
+## 🛠️ Tech Stack
+
+- **React Native** with **Expo** (SDK 54)
+- **TypeScript** (strict mode)
+- **React Navigation** (Stack Navigator)
+- **TanStack Query** (React Query) for data fetching and caching
+- **React Hook Form** + **Zod** for form validation
+- **Expo Secure Store** for secure token storage
+- **Axios** for HTTP requests
+
+## 📦 Prerequisites
+
 - Node.js (v18+ recommended)
-- npm ou yarn
-- Expo CLI (`npm i -g expo-cli`) opcional, mas útil
+- npm or yarn
+- Android Studio (for Android emulator) or Xcode (for iOS simulator)
+- Expo CLI (optional but recommended): `npm install -g expo-cli`
 
-## Instalação
+## 🚀 Installation
 
-1. Instalar dependências
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd Educamais-Mobile
+   ```
 
+2. **Install dependencies**
+   ```bash
+   npm ci
+   # or
+   npm install
+   ```
+
+3. **Set up environment variables**
+   
+   Copy `.env.example` to `.env` and configure your API URL:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` and set your backend API URL:
+   ```env
+   EXPO_PUBLIC_API_URL=http://192.168.x.x:3333
+   ```
+   
+   **Important**: For Android emulator, use your machine's local network IP address (not `localhost`).
+
+## 🏃 Running the App
+
+### Start the Metro bundler
 ```bash
-npm ci
-# ou
-npm install
+npm start
+# or
+npx expo start
 ```
 
-2. Iniciar o Metro/Expo
+### Run on Android Emulator
+
+1. **Start Android Studio and launch an Android emulator**
+
+2. **Run the app**
+   ```bash
+   npm run android
+   # or
+   npx expo start --android
+   ```
+
+### Run on iOS Simulator (macOS only)
 
 ```bash
-npm run start
-# Para Android
-npm run android
-# Para iOS
 npm run ios
+# or
+npx expo start --ios
 ```
 
-## Variáveis de ambiente
-O app consome a API a partir da variável `EXPO_PUBLIC_API_URL`. Por padrão o código usa um IP local. Para apontar para sua API, exporte a variável antes de iniciar o Expo, por exemplo:
+### Run on Physical Device
 
-Windows (PowerShell):
+1. Install **Expo Go** app on your device
+2. Scan the QR code shown in the terminal after running `npm start`
 
-```powershell
-$env:EXPO_PUBLIC_API_URL = "http://192.168.0.100:3333"
-npm run start
+## 🔐 Authentication
+
+The app uses secure token storage via **expo-secure-store**. Upon successful login, the session token is stored securely and automatically included in all API requests.
+
+### Available Roles
+- **teacher**: Can create, edit, and delete posts
+- **student**: Can view posts (CRUD operations restricted)
+
+## 📱 App Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   └── common/         # Button, Input, Loader, EmptyState, ErrorState
+├── contexts/           # React contexts (AuthContext)
+├── features/           # Feature-specific code
+│   ├── students/       # Student features (scaffold)
+│   └── teachers/       # Teacher features (scaffold)
+├── hooks/              # Custom React hooks (usePosts, useDebounce)
+├── services/           # API services (api, auth, storage, posts)
+└── types/              # TypeScript types and Zod schemas
+
+app/
+└── screens/            # Screen components
+    ├── Home/          # Feed screen with search and infinite scroll
+    ├── Login/         # Authentication screen
+    ├── PostDetail/    # Post detail screen
+    └── admin/         # Admin screens (teacher-only)
+        ├── PostsList/
+        ├── PostCreate/
+        └── PostEdit/
 ```
 
-macOS / Linux:
+## 🌐 API Integration
 
-```bash
-export EXPO_PUBLIC_API_URL="http://192.168.0.100:3333"
-npm run start
-```
+The app expects the following backend endpoints:
 
-## Lint
+### Authentication
+- `POST /api/auth/sign-in/email` - Sign in
+- `POST /api/auth/sign-up/email` - Sign up
+- `POST /api/auth/sign-out` - Sign out
 
+### Posts
+- `GET /api/posts?page=1&limit=10&q=search` - List posts (with pagination and search)
+- `GET /api/posts/:id` - Get post details
+- `POST /api/posts` - Create post (teacher only)
+- `PUT /api/posts/:id` - Update post (teacher only)
+- `DELETE /api/posts/:id` - Delete post (teacher only)
+
+### Future Endpoints (scaffolded)
+- Teachers: `GET/POST/PUT/DELETE /api/teachers`
+- Students: `GET/POST/PUT/DELETE /api/students`
+
+## 🧪 Development
+
+### Linting
 ```bash
 npm run lint
 ```
 
-## Observações
-- O projeto é um cliente Expo; caso precise compilar para produção, siga a documentação do Expo.
-- Backend não está incluído neste repositório. Se você tiver o backend local, assegure-se de que o `EXPO_PUBLIC_API_URL` aponte para ele.
-# Welcome to your Expo app 👋
+### Type Checking
+TypeScript is configured with `strict: true` for maximum type safety.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 🔧 Environment Variables
 
-## Get started
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `EXPO_PUBLIC_API_URL` | Backend API base URL | `http://192.168.1.100:3333` |
 
-1. Install dependencies
+### Finding Your Local IP Address
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+**Windows (PowerShell)**:
+```powershell
+ipconfig
+# Look for "IPv4 Address" under your active network adapter
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+**macOS/Linux**:
+```bash
+ifconfig | grep "inet "
+# Look for your local network IP (usually starts with 192.168.x.x)
+```
 
-## Learn more
+Then use this IP in your `.env` file:
+```env
+EXPO_PUBLIC_API_URL=http://192.168.x.x:3333
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## 📝 Usage
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Login Flow
+1. Open the app
+2. Enter email and password
+3. Click "Entrar" to sign in or "Cadastre-se" to create an account
+4. Upon successful authentication, you'll be redirected to the Feed
 
-## Join the community
+### Viewing Posts
+- The Feed screen shows all posts with infinite scroll
+- Use the search bar to filter posts by keyword (with debounce)
+- Pull down to refresh the list
+- Tap on any post to view full details
 
-Join our community of developers creating universal apps.
+### Admin Panel (Teachers Only)
+1. On the Feed screen, tap "⚙️ Administrar Posts"
+2. View all posts with edit/delete options
+3. Tap "➕ Novo Post" to create a new post
+4. Tap "✏️ Editar" to edit an existing post
+5. Tap "🗑️ Excluir" to delete a post (with confirmation)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🔍 Key Features Explained
+
+### Search with Debounce
+The search functionality includes a 500ms debounce to avoid excessive API calls while typing.
+
+### Infinite Scroll
+Posts are loaded in pages of 10. As you scroll down, more posts are automatically fetched.
+
+### Pull to Refresh
+Pull down on the Feed to refresh the post list.
+
+### Form Validation
+All forms use Zod schemas for validation:
+- Post title: 3-200 characters
+- Post content: minimum 10 characters
+- Post description: optional, max 500 characters
+
+### Role-Based Access
+- Students can only view posts
+- Teachers can create, edit, and delete posts
+- Admin screens are accessible only to teachers
+
+## 🐛 Troubleshooting
+
+### Cannot connect to backend
+- Ensure your backend is running
+- Check that `EXPO_PUBLIC_API_URL` uses your local network IP (not localhost)
+- Ensure both your development machine and test device/emulator are on the same network
+
+### Session not persisting
+- Clear app data and try logging in again
+- Check console logs for SecureStore errors
+
+### Build errors
+- Clear cache: `npx expo start -c`
+- Delete node_modules and reinstall: `rm -rf node_modules && npm install`
+
+## 📄 License
+
+[Add your license here]
+
+## 👥 Contributors
+
+[Add contributors here]

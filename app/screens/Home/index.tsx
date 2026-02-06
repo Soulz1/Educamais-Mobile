@@ -1,65 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator,
   Alert,
-  Platform,
-  StatusBar,
+  TextInput,
+  RefreshControl,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../routes/app.routes';
 import { useAuth } from '../../../src/contexts/AuthContext';
-import { postService } from '../../../src/services/postService';
+import { useInfinitePosts } from '../../../src/hooks/usePosts';
+import { useDebounce } from '../../../src/hooks/useDebounce';
+import { Loader, EmptyState, ErrorState } from '../../../src/components/common';
+import { Post } from '../../../src/types/models';
 
-interface Post {
-  id: number;
-  titulo: string;
-  conteudo: string;
-  autorId: string;
-  createdAt: string;
-  atualizacao: string;
-  autor?: {
-    name: string;
-    email: string;
-    appRole?: string;
-  };
-}
+type HomeNavigationProp = NavigationProp<RootStackParamList>;
 
 function Home() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<HomeNavigationProp>();
   const { user, logout } = useAuth();
   const displayName = user?.name ? user.name.split(' ')[0] : 'Usuário';
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // Carregar posts ao montar o componente
-  useEffect(() => {
-    loadPosts();
-  }, []);
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+  } = useInfinitePosts(10, debouncedSearch || undefined);
 
-  const loadPosts = async () => {
-    try {
-      setLoading(true);
-      const postsData = await postService.getAllPosts(1, 20);
-      console.log('✅ Posts carregados:', postsData.length);
-      setPosts(postsData);
-    } catch (error) {
-      console.error('❌ Erro ao carregar posts:', error);
-      Alert.alert('Erro', 'Não foi possível carregar os posts');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadPosts();
-    setRefreshing(false);
-  };
+  // Flatten all pages into a single array
+  const posts = data?.pages.flatMap((page) => page.data) ?? [];
 
   const handleLogout = async () => {
     Alert.alert('Logout', 'Tem certeza que deseja sair?', [
@@ -73,36 +54,69 @@ function Home() {
     ]);
   };
 
-  const renderPostItem = ({ item }: { item: Post }) => (
-    <TouchableOpacity
-      style={styles.postCard}
-      onPress={() => navigation.navigate('screens/PostDetail/index' as any, { postId: item.id })}
-      activeOpacity={0.8}
-      hitSlop={{ top: 12, left: 12, right: 12, bottom: 12 }}
-      accessibilityRole="button"
-    >
-      <View style={styles.postHeader}>
-        <Text style={styles.postTitle}>{item.titulo}</Text>
-        <Text style={styles.postAuthor}>
-          por {item.autor?.name || 'Desconhecido'}
-        </Text>
-      </View>
-      <Text style={styles.postContent} numberOfLines={3}>
-        {item.conteudo}
-      </Text>
-      <View style={styles.postFooter}>
-        <Text style={styles.postDate}>
-          {new Date(item.createdAt).toLocaleDateString('pt-BR')}
-        </Text>
-        <Text style={styles.readMore}>Leia mais →</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
-  if (loading) {
+  const renderPostItem = ({ item }: { item: Post }) => {
+    // Use description if available, otherwise use first 200 chars of content
+    const preview = item.descricao || (item.conteudo.length > 200 
+      ? item.conteudo.substring(0, 200) + '...' 
+      : item.conteudo);
+
+    return (
+      <TouchableOpacity
+        style={styles.postCard}
+        onPress={() => navigation.navigate('screens/PostDetail/index', { postId: item.id })}
+        activeOpacity={0.8}
+        hitSlop={{ top: 12, left: 12, right: 12, bottom: 12 }}
+        accessibilityRole="button"
+      >
+        <View style={styles.postHeader}>
+          <Text style={styles.postTitle}>{item.titulo}</Text>
+          <Text style={styles.postAuthor}>
+            por {item.autor?.name || 'Desconhecido'}
+          </Text>
+        </View>
+        <Text style={styles.postContent} numberOfLines={3}>
+          {preview}
+        </Text>
+        <View style={styles.postFooter}>
+          <Text style={styles.postDate}>
+            {new Date(item.createdAt).toLocaleDateString('pt-BR')}
+          </Text>
+          <Text style={styles.readMore}>Leia mais →</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderFooter = () => {
+    if (!isFetchingNextPage) return null;
+    return (
+      <View style={styles.footerLoader}>
+        <Loader size="small" />
+      </View>
+    );
+  };
+
+  if (isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <Loader />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <ErrorState
+          message={(error as any)?.message || 'Erro ao carregar posts'}
+          onRetry={() => refetch()}
+        />
       </View>
     );
   }
@@ -114,6 +128,11 @@ function Home() {
         <View>
           <Text style={styles.greeting}>Bem-vindo!</Text>
           <Text style={styles.userName}>{displayName}</Text>
+          {user?.appRole && (
+            <Text style={styles.userRole}>
+              {user.appRole === 'teacher' ? '👨‍🏫 Professor' : '👨‍🎓 Aluno'}
+            </Text>
+          )}
         </View>
         <TouchableOpacity
           style={styles.logoutButton}
@@ -123,19 +142,56 @@ function Home() {
         </TouchableOpacity>
       </View>
 
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar posts..."
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholderTextColor="#999"
+        />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setSearchQuery('')}
+            style={styles.clearButton}
+          >
+            <Text style={styles.clearButtonText}>✕</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* Admin Button - Only for teachers */}
+      {user?.appRole === 'teacher' && (
+        <View style={styles.adminButtonContainer}>
+          <TouchableOpacity
+            style={styles.adminButton}
+            onPress={() => navigation.navigate('screens/admin/PostsList/index')}
+          >
+            <Text style={styles.adminButtonText}>⚙️ Administrar Posts</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Posts List */}
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderPostItem}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Nenhum post disponível</Text>
-          </View>
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderFooter}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={() => refetch()}
+            colors={['#007AFF']}
+          />
         }
-        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={
+          <EmptyState message={searchQuery ? 'Nenhum post encontrado' : 'Nenhum post disponível'} />
+        }
+        contentContainerStyle={posts.length === 0 ? styles.emptyList : styles.listContent}
       />
     </View>
   );
@@ -168,6 +224,11 @@ const styles = StyleSheet.create({
     color: '#000',
     marginTop: 4,
   },
+  userRole: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 2,
+  },
   logoutButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -179,8 +240,55 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 12,
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    fontSize: 14,
+  },
+  clearButton: {
+    marginLeft: 8,
+    padding: 8,
+  },
+  clearButtonText: {
+    fontSize: 18,
+    color: '#999',
+  },
+  adminButtonContainer: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  adminButton: {
+    backgroundColor: '#34C759',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  adminButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   listContent: {
     padding: 12,
+  },
+  emptyList: {
+    flex: 1,
   },
   postCard: {
     backgroundColor: '#fff',
@@ -228,15 +336,8 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontWeight: '600',
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 50,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#999',
+  footerLoader: {
+    paddingVertical: 20,
   },
 });
 

@@ -1,69 +1,22 @@
-import axios, { AxiosInstance } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.15.5:3333';
-
-interface Post {
-  id: number;
-  titulo: string;
-  conteudo: string;
-  autorId: string;
-  createdAt: string;
-  atualizacao: string;
-  autor?: {
-    name: string;
-    email: string;
-    appRole?: string;
-  };
-}
-
-interface PostsResponse {
-  success: boolean;
-  data: Post[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    pages: number;
-  };
-}
+import { api } from './api';
+import { Post, PostsResponse, PostDetailResponse, CreatePostFormData, UpdatePostFormData } from '../types/models';
 
 class PostService {
-  private api: AxiosInstance;
-
-  constructor() {
-    this.api = axios.create({
-      baseURL: `${API_URL}/api`,
-      withCredentials: true,
-    });
-
-    // Interceptor para incluir o token em todas as requisições
-    this.api.interceptors.request.use(async (config) => {
-      try {
-        const sessionData = await AsyncStorage.getItem('@educamais_session');
-        if (sessionData) {
-          const session = JSON.parse(sessionData);
-          config.headers.Authorization = `Bearer ${session.sessionToken}`;
-          console.log('🔐 Token adicionado ao header');
-        }
-      } catch (error) {
-        console.error('Erro ao adicionar token:', error);
-      }
-      return config;
-    });
-  }
 
   /**
    * Buscar todos os posts com paginação
    */
-  async getAllPosts(page: number = 1, limit: number = 10): Promise<Post[]> {
+  async getAllPosts(page: number = 1, limit: number = 10, query?: string): Promise<PostsResponse> {
     try {
-      const response = await this.api.get<PostsResponse>('/posts', {
-        params: { page, limit },
-      });
+      const params: Record<string, string | number> = { page, limit };
+      if (query) {
+        params.q = query;
+      }
+
+      const response = await api.get<PostsResponse>('/posts', { params });
 
       console.log(`📝 Posts fetched: ${response.data.data.length} posts`);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       console.error('❌ Erro ao buscar posts:', error);
       throw error;
@@ -75,8 +28,7 @@ class PostService {
    */
   async getPostById(postId: number): Promise<Post> {
     try {
-      const response = await this.api.get(`/posts/${postId}`);
-      // backend returns { success, data: Post }
+      const response = await api.get<PostDetailResponse>(`/posts/${postId}`);
       return response.data.data;
     } catch (error) {
       console.error('❌ Erro ao buscar post:', error);
@@ -87,10 +39,10 @@ class PostService {
   /**
    * Buscar posts por termo de busca
    */
-  async searchPosts(searchTerm: string): Promise<Post[]> {
+  async searchPosts(searchTerm: string, page: number = 1, limit: number = 10): Promise<PostsResponse> {
     try {
-      const response = await this.api.get<Post[]>('/posts/search', {
-        params: { q: searchTerm },
+      const response = await api.get<PostsResponse>('/posts', {
+        params: { q: searchTerm, page, limit },
       });
       return response.data;
     } catch (error) {
@@ -102,15 +54,12 @@ class PostService {
   /**
    * Criar um novo post
    */
-  async createPost(titulo: string, conteudo: string): Promise<Post> {
+  async createPost(data: CreatePostFormData): Promise<Post> {
     try {
-      const response = await this.api.post<Post>('/posts', {
-        titulo,
-        conteudo,
-      });
+      const response = await api.post<{ success: boolean; data: Post }>('/posts', data);
 
       console.log('✅ Post criado com sucesso');
-      return response.data;
+      return response.data.data;
     } catch (error) {
       console.error('❌ Erro ao criar post:', error);
       throw error;
@@ -120,19 +69,12 @@ class PostService {
   /**
    * Atualizar um post existente
    */
-  async updatePost(
-    postId: number,
-    titulo: string,
-    conteudo: string
-  ): Promise<Post> {
+  async updatePost(postId: number, data: UpdatePostFormData): Promise<Post> {
     try {
-      const response = await this.api.put<Post>(`/posts/${postId}`, {
-        titulo,
-        conteudo,
-      });
+      const response = await api.put<{ success: boolean; data: Post }>(`/posts/${postId}`, data);
 
       console.log('✅ Post atualizado com sucesso');
-      return response.data;
+      return response.data.data;
     } catch (error) {
       console.error('❌ Erro ao atualizar post:', error);
       throw error;
@@ -144,7 +86,7 @@ class PostService {
    */
   async deletePost(postId: number): Promise<void> {
     try {
-      await this.api.delete(`/posts/${postId}`);
+      await api.delete(`/posts/${postId}`);
       console.log('✅ Post deletado com sucesso');
     } catch (error) {
       console.error('❌ Erro ao deletar post:', error);
