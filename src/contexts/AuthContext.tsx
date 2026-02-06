@@ -1,17 +1,21 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
+import { UserRole } from '../types/models';
 
 interface User {
   id: string;
   email: string;
   name: string;
   appRole?: string;
+  role?: UserRole;
 }
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isSignedIn: boolean;
+  isTeacher: boolean;
+  isStudent: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -78,10 +82,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Helper to check if user is a teacher
+  const isTeacher = user?.appRole?.toLowerCase() === 'teacher' || user?.role === UserRole.TEACHER;
+  
+  // Helper to check if user is a student
+  const isStudent = user?.appRole?.toLowerCase() === 'student' || user?.role === UserRole.STUDENT;
+
   const value: AuthContextType = {
     user,
     isLoading,
     isSignedIn: !!user,
+    isTeacher,
+    isStudent,
     signIn,
     signUp,
     logout,

@@ -1,15 +1,17 @@
 # EducaMais Mobile
 
-Mobile client for the EducaMais platform (Expo / React Native).
+Mobile client for the EducaMais platform built with Expo and React Native.
 
-## Requisitos
-- Node.js (v18+ recommended)
+## 📋 Requisitos
+
+- Node.js (v18+ recomendado)
 - npm ou yarn
-- Expo CLI (`npm i -g expo-cli`) opcional, mas útil
+- Android Studio (para emulador Android) ou Xcode (para iOS)
+- Expo CLI (opcional, mas útil): `npm install -g expo-cli`
 
-## Instalação
+## 🚀 Instalação
 
-1. Instalar dependências
+### 1. Instalar dependências
 
 ```bash
 npm ci
@@ -17,89 +19,223 @@ npm ci
 npm install
 ```
 
-2. Iniciar o Metro/Expo
+### 2. Configurar variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
 
 ```bash
-npm run start
-# Para Android
-npm run android
-# Para iOS
-npm run ios
+cp .env.example .env
 ```
 
-## Variáveis de ambiente
-O app consome a API a partir da variável `EXPO_PUBLIC_API_URL`. Por padrão o código usa um IP local. Para apontar para sua API, exporte a variável antes de iniciar o Expo, por exemplo:
+Edite o arquivo `.env` e configure a URL da API:
 
-Windows (PowerShell):
-
-```powershell
-$env:EXPO_PUBLIC_API_URL = "http://192.168.0.100:3333"
-npm run start
+```env
+EXPO_PUBLIC_API_URL=http://192.168.1.100:3333
 ```
 
-macOS / Linux:
+**Importante para Android Emulator:**
+- Não use `localhost` ou `127.0.0.1`
+- Use o IP da sua máquina na rede local (ex: `192.168.1.100`)
+- Para descobrir seu IP:
+  - Windows: `ipconfig`
+  - macOS/Linux: `ifconfig` ou `ip addr`
+
+### 3. Iniciar o aplicativo
 
 ```bash
-export EXPO_PUBLIC_API_URL="http://192.168.0.100:3333"
-npm run start
+npm start
+# ou
+npx expo start
 ```
 
-## Lint
+## 📱 Executando no Android Studio
+
+### Setup do Emulador Android
+
+1. **Instalar Android Studio**
+   - Download: https://developer.android.com/studio
+   - Siga o instalador padrão
+
+2. **Configurar Android Virtual Device (AVD)**
+   - Abra Android Studio
+   - Vá em `Tools > Device Manager`
+   - Clique em `Create Device`
+   - Selecione um dispositivo (recomendado: Pixel 6)
+   - Selecione uma imagem do sistema (recomendado: Android 13/API 33)
+   - Finalize a criação
+
+3. **Iniciar o emulador**
+   - No Device Manager, clique no ícone de Play do dispositivo criado
+   - Aguarde o emulador iniciar completamente
+
+4. **Executar o app no emulador**
+   
+   Com o emulador rodando, execute:
+   ```bash
+   npm run android
+   # ou
+   npx expo start --android
+   # ou pressione 'a' no terminal do Expo
+   ```
+
+### Atalhos úteis no Expo
+
+Após executar `npx expo start`:
+- `a` - Abrir no Android
+- `i` - Abrir no iOS
+- `w` - Abrir no navegador
+- `r` - Recarregar app
+- `m` - Alternar menu
+- `c` - Limpar cache do bundler
+
+## 🏗️ Estrutura do Projeto
+
+```
+├── app/                      # Expo Router (screens antigas)
+│   ├── screens/
+│   │   ├── Login/           # Tela de login
+│   │   ├── Home/            # Re-export do Feed
+│   │   └── PostDetail/      # Detalhe do post
+│   └── _layout.tsx          # Layout raiz
+├── src/
+│   ├── components/
+│   │   └── common/          # Componentes reutilizáveis
+│   │       ├── Loader.tsx
+│   │       ├── ErrorState.tsx
+│   │       ├── EmptyState.tsx
+│   │       └── PostSkeleton.tsx
+│   ├── contexts/
+│   │   └── AuthContext.tsx  # Contexto de autenticação
+│   ├── features/
+│   │   ├── auth/            # Feature de autenticação
+│   │   ├── posts/
+│   │   │   ├── FeedScreen.tsx
+│   │   │   └── admin/       # CRUD de posts (teachers only)
+│   │   │       ├── AdminPostsListScreen.tsx
+│   │   │       ├── AdminPostCreateScreen.tsx
+│   │   │       └── AdminPostEditScreen.tsx
+│   │   ├── teachers/        # Scaffold para CRUD de professores
+│   │   └── students/        # Scaffold para CRUD de alunos
+│   ├── hooks/
+│   │   ├── usePosts.ts      # React Query hooks para posts
+│   │   └── useDebounce.ts   # Hook de debounce
+│   ├── services/
+│   │   ├── api.ts           # Cliente axios com interceptors
+│   │   ├── authService.ts   # Serviço de autenticação
+│   │   └── postService.ts   # Serviço de posts
+│   └── types/
+│       └── models.ts        # Tipos TypeScript e schemas Zod
+├── routes/
+│   ├── app.routes.tsx       # Rotas da aplicação
+│   └── index.tsx            # Entry point de navegação
+└── app.config.ts            # Configuração do Expo
+```
+
+## 🔐 Funcionalidades Implementadas
+
+### Autenticação
+- ✅ Login com email e senha
+- ✅ Cadastro de novos usuários
+- ✅ Armazenamento seguro de token (expo-secure-store)
+- ✅ Interceptors para adicionar token nas requisições
+- ✅ Logout automático em caso de 401
+- ✅ Persistência de sessão
+- ✅ Controle de acesso por papel (teacher/student)
+
+### Posts (Feed)
+- ✅ Listagem de posts com paginação infinita
+- ✅ Busca com debounce (500ms)
+- ✅ Pull-to-refresh
+- ✅ Estados de loading/empty/error
+- ✅ Skeleton loading
+- ✅ Navegação para detalhes
+
+### Posts (Administração - Teachers Only)
+- ✅ Listagem administrativa de posts
+- ✅ Criação de posts com validação (react-hook-form + zod)
+- ✅ Edição de posts com pré-carregamento de dados
+- ✅ Exclusão de posts com confirmação
+- ✅ Invalidação automática de cache
+- ✅ Guards de rota por papel
+
+### Infraestrutura
+- ✅ React Query para gerenciamento de estado
+- ✅ Validação com Zod
+- ✅ Tipos TypeScript com strict mode
+- ✅ Configuração de ambiente via .env
+- ✅ ESLint configurado
+- ✅ Estrutura modular por features
+
+## 📡 API Endpoints
+
+### Autenticação
+- `POST /api/auth/sign-in/email` - Login
+- `POST /api/auth/sign-up/email` - Cadastro
+- `POST /api/auth/sign-out` - Logout
+
+### Posts
+- `GET /api/posts?page=&limit=&q=` - Listar posts (com busca opcional)
+- `GET /api/posts/:id` - Detalhe do post
+- `POST /api/posts` - Criar post (teacher only)
+- `PUT /api/posts/:id` - Atualizar post (teacher only)
+- `DELETE /api/posts/:id` - Deletar post (teacher only)
+
+### Teachers/Students (Scaffolds - A implementar)
+- `GET/POST/PUT/DELETE /api/teachers`
+- `GET/POST/PUT/DELETE /api/students`
+
+## 🎨 Temas e Customização
+
+O app suporta tema claro/escuro automaticamente baseado nas configurações do sistema.
+
+## 🧪 Lint
 
 ```bash
 npm run lint
 ```
 
-## Observações
-- O projeto é um cliente Expo; caso precise compilar para produção, siga a documentação do Expo.
-- Backend não está incluído neste repositório. Se você tiver o backend local, assegure-se de que o `EXPO_PUBLIC_API_URL` aponte para ele.
-# Welcome to your Expo app 👋
+## 🐛 Troubleshooting
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+### Erro de conexão com a API
 
-## Get started
+1. Verifique se o backend está rodando
+2. Confirme que `EXPO_PUBLIC_API_URL` está correto no `.env`
+3. Para Android emulator, use o IP da sua máquina, não `localhost`
+4. Teste a URL no navegador: `http://SEU_IP:3333/api/posts`
 
-1. Install dependencies
+### App não conecta no emulador
 
-   ```bash
-   npm install
-   ```
+1. Certifique-se de que o emulador está na mesma rede
+2. Verifique se não há firewall bloqueando a conexão
+3. Reinicie o Metro bundler: `npm start` e pressione `r`
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Erro "Unable to resolve module"
 
 ```bash
-npm run reset-project
+# Limpar cache
+npx expo start -c
+# ou
+rm -rf node_modules package-lock.json
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📝 Próximos Passos
 
-## Learn more
+- [ ] Implementar CRUD completo de Teachers
+- [ ] Implementar CRUD completo de Students
+- [ ] Adicionar sistema de comentários nos posts
+- [ ] Implementar notificações
+- [ ] Adicionar testes unitários e de integração
+- [ ] Configurar CI/CD
 
-To learn more about developing your project with Expo, look at the following resources:
+## 📄 Licença
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Este projeto é parte do trabalho acadêmico da faculdade.
 
-## Join the community
+## 👥 Contribuidores
 
-Join our community of developers creating universal apps.
+- Equipe EducaMais
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+Para mais informações sobre Expo, visite: [https://docs.expo.dev](https://docs.expo.dev)
