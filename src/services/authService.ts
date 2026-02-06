@@ -154,7 +154,8 @@ class AuthService {
    * Tratar erros de forma legível
    */
   private handleError(error: any): Error {
-    if (error?.isAxiosError) {
+    // eslint-disable-next-line import/no-named-as-default-member
+    if (axios.isAxiosError(error)) {
       const message = error.response?.data?.message || error.message;
       return new Error(message);
     }

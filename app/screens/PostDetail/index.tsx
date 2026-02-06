@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -33,14 +33,7 @@ function PostDetail() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (postId) {
-      loadPost();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postId]);
-
-  const loadPost = async () => {
+  const loadPost = useCallback(async () => {
     try {
       setLoading(true);
       console.log('📝 Carregando post com ID:', postId);
@@ -58,7 +51,13 @@ function PostDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [postId, navigation]);
+
+  useEffect(() => {
+    if (postId) {
+      loadPost();
+    }
+  }, [postId, loadPost]);
 
   if (loading) {
     return (
