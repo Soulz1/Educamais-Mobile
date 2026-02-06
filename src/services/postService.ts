@@ -8,7 +8,7 @@ class PostService {
    */
   async getAllPosts(page: number = 1, limit: number = 10, query?: string): Promise<PostsResponse> {
     try {
-      const params: any = { page, limit };
+      const params: Record<string, string | number> = { page, limit };
       if (query) {
         params.q = query;
       }

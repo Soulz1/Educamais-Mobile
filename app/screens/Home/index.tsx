@@ -60,31 +60,38 @@ function Home() {
     }
   };
 
-  const renderPostItem = ({ item }: { item: Post }) => (
-    <TouchableOpacity
-      style={styles.postCard}
-      onPress={() => navigation.navigate('screens/PostDetail/index', { postId: item.id })}
-      activeOpacity={0.8}
-      hitSlop={{ top: 12, left: 12, right: 12, bottom: 12 }}
-      accessibilityRole="button"
-    >
-      <View style={styles.postHeader}>
-        <Text style={styles.postTitle}>{item.titulo}</Text>
-        <Text style={styles.postAuthor}>
-          por {item.autor?.name || 'Desconhecido'}
+  const renderPostItem = ({ item }: { item: Post }) => {
+    // Use description if available, otherwise use first 200 chars of content
+    const preview = item.descricao || (item.conteudo.length > 200 
+      ? item.conteudo.substring(0, 200) + '...' 
+      : item.conteudo);
+
+    return (
+      <TouchableOpacity
+        style={styles.postCard}
+        onPress={() => navigation.navigate('screens/PostDetail/index', { postId: item.id })}
+        activeOpacity={0.8}
+        hitSlop={{ top: 12, left: 12, right: 12, bottom: 12 }}
+        accessibilityRole="button"
+      >
+        <View style={styles.postHeader}>
+          <Text style={styles.postTitle}>{item.titulo}</Text>
+          <Text style={styles.postAuthor}>
+            por {item.autor?.name || 'Desconhecido'}
+          </Text>
+        </View>
+        <Text style={styles.postContent} numberOfLines={3}>
+          {preview}
         </Text>
-      </View>
-      <Text style={styles.postContent} numberOfLines={3}>
-        {item.descricao || item.conteudo}
-      </Text>
-      <View style={styles.postFooter}>
-        <Text style={styles.postDate}>
-          {new Date(item.createdAt).toLocaleDateString('pt-BR')}
-        </Text>
-        <Text style={styles.readMore}>Leia mais →</Text>
-      </View>
-    </TouchableOpacity>
-  );
+        <View style={styles.postFooter}>
+          <Text style={styles.postDate}>
+            {new Date(item.createdAt).toLocaleDateString('pt-BR')}
+          </Text>
+          <Text style={styles.readMore}>Leia mais →</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderFooter = () => {
     if (!isFetchingNextPage) return null;
