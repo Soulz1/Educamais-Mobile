@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,15 +8,16 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../../../../src/contexts/AuthContext';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../../routes/app.routes';
 import { useInfinitePosts, useDeletePost } from '../../../../src/hooks/usePosts';
 import { Loader, EmptyState, ErrorState } from '../../../../src/components/common';
 import { Post } from '../../../../src/types/models';
 
+type AdminPostsListNavigationProp = NavigationProp<RootStackParamList>;
+
 function AdminPostsList() {
-  const navigation = useNavigation();
-  const { user } = useAuth();
+  const navigation = useNavigation<AdminPostsListNavigationProp>();
 
   const {
     data,
@@ -59,7 +60,7 @@ function AdminPostsList() {
   };
 
   const handleEdit = (post: Post) => {
-    navigation.navigate('screens/admin/PostEdit/index' as any, { postId: post.id });
+    navigation.navigate('screens/admin/PostEdit/index', { postId: post.id });
   };
 
   const handleLoadMore = () => {
@@ -142,7 +143,7 @@ function AdminPostsList() {
       <View style={styles.createButtonContainer}>
         <TouchableOpacity
           style={styles.createButton}
-          onPress={() => navigation.navigate('screens/admin/PostCreate/index' as any)}
+          onPress={() => navigation.navigate('screens/admin/PostCreate/index')}
         >
           <Text style={styles.createButtonText}>➕ Novo Post</Text>
         </TouchableOpacity>

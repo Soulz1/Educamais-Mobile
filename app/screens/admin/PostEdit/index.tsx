@@ -9,17 +9,21 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, NavigationProp, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../../routes/app.routes';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePost, useUpdatePost } from '../../../../src/hooks/usePosts';
 import { updatePostSchema, UpdatePostFormData } from '../../../../src/types/models';
 import { Input, Button, Loader, ErrorState } from '../../../../src/components/common';
 
+type AdminPostEditNavigationProp = NavigationProp<RootStackParamList, 'screens/admin/PostEdit/index'>;
+type AdminPostEditRouteProp = RouteProp<RootStackParamList, 'screens/admin/PostEdit/index'>;
+
 function AdminPostEdit() {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const postId = (route.params as any)?.postId;
+  const navigation = useNavigation<AdminPostEditNavigationProp>();
+  const route = useRoute<AdminPostEditRouteProp>();
+  const postId = route.params.postId;
 
   const { data: post, isLoading, isError, error, refetch } = usePost(postId);
   const { mutate: updatePost, isPending } = useUpdatePost();

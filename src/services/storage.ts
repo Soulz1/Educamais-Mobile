@@ -53,7 +53,7 @@ class StorageService {
     try {
       const session = await this.getSession();
       return session !== null;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

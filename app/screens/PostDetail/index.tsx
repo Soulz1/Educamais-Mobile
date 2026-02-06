@@ -6,14 +6,18 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, NavigationProp, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../routes/app.routes';
 import { usePost } from '../../../src/hooks/usePosts';
 import { Loader, ErrorState } from '../../../src/components/common';
 
+type PostDetailNavigationProp = NavigationProp<RootStackParamList, 'screens/PostDetail/index'>;
+type PostDetailRouteProp = RouteProp<RootStackParamList, 'screens/PostDetail/index'>;
+
 function PostDetail() {
-  const navigation = useNavigation<any>();
-  const route = useRoute();
-  const postId = (route.params as any)?.postId;
+  const navigation = useNavigation<PostDetailNavigationProp>();
+  const route = useRoute<PostDetailRouteProp>();
+  const postId = route.params.postId;
 
   const { data: post, isLoading, isError, error, refetch } = usePost(postId);
 
@@ -42,10 +46,10 @@ function PostDetail() {
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
-            if (navigation.canGoBack && navigation.canGoBack()) {
+            if (navigation.canGoBack()) {
               navigation.goBack();
             } else {
-              navigation.navigate('screens/Home/index' as any);
+              navigation.navigate('screens/Home/index', { userName: '' });
             }
           }}
           style={styles.backButton}
