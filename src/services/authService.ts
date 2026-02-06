@@ -1,7 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.15.5:3333';
+const API_URL = Constants.expoConfig?.extra?.apiUrl || process.env.EXPO_PUBLIC_API_URL || 'http://192.168.15.5:3333';
 
 interface AuthCredentials {
   email: string;
@@ -57,9 +58,9 @@ class AuthService {
         sessionToken: response.data.token,
       };
 
-      // Salvar sessão no AsyncStorage
-      await AsyncStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
-      console.log('✅ Session saved to AsyncStorage (SignUp)'); // DEBUG
+      // Salvar sessão no SecureStore
+      await SecureStore.setItemAsync(this.sessionKey, JSON.stringify(sessionData));
+      console.log('✅ Session saved to SecureStore (SignUp)'); // DEBUG
 
       // Atualizar header padrão com token
       this.setAuthToken(sessionData.sessionToken);
@@ -84,9 +85,9 @@ class AuthService {
         sessionToken: response.data.token,
       };
 
-      // Salvar sessão no AsyncStorage
-      await AsyncStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
-      console.log('✅ Session saved to AsyncStorage (SignIn)'); // DEBUG
+      // Salvar sessão no SecureStore
+      await SecureStore.setItemAsync(this.sessionKey, JSON.stringify(sessionData));
+      console.log('✅ Session saved to SecureStore (SignIn)'); // DEBUG
 
       // Atualizar header padrão com token
       this.setAuthToken(sessionData.sessionToken);
@@ -103,11 +104,11 @@ class AuthService {
   async logout(): Promise<void> {
     try {
       await this.api.post('/sign-out');
-      await AsyncStorage.removeItem(this.sessionKey);
+      await SecureStore.deleteItemAsync(this.sessionKey);
       this.setAuthToken(null);
-    } catch (error) {
+    } catch {
       // Mesmo se falhar na API, limpar local
-      await AsyncStorage.removeItem(this.sessionKey);
+      await SecureStore.deleteItemAsync(this.sessionKey);
       this.setAuthToken(null);
     }
   }
@@ -117,8 +118,8 @@ class AuthService {
    */
   async getSession(): Promise<UserSession | null> {
     try {
-      const sessionData = await AsyncStorage.getItem(this.sessionKey);
-      console.log('Session from AsyncStorage:', sessionData); // DEBUG
+      const sessionData = await SecureStore.getItemAsync(this.sessionKey);
+      console.log('Session from SecureStore:', sessionData); // DEBUG
       if (sessionData) {
         const session = JSON.parse(sessionData) as UserSession;
         this.setAuthToken(session.sessionToken);
@@ -153,6 +154,7 @@ class AuthService {
    * Tratar erros de forma legível
    */
   private handleError(error: any): Error {
+    // eslint-disable-next-line import/no-named-as-default-member
     if (axios.isAxiosError(error)) {
       const message = error.response?.data?.message || error.message;
       return new Error(message);
