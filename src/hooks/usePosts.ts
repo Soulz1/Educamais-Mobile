@@ -6,7 +6,9 @@ import type { PostFormData } from '../types/models';
 export const postKeys = {
   all: ['posts'] as const,
   lists: () => [...postKeys.all, 'list'] as const,
-  list: (filters: string) => [...postKeys.lists(), { filters }] as const,
+  list: (filters: { search?: string; page?: number; limit?: number }) => 
+    [...postKeys.lists(), filters] as const,
+  infinite: (search?: string) => [...postKeys.lists(), 'infinite', { search }] as const,
   details: () => [...postKeys.all, 'detail'] as const,
   detail: (id: number) => [...postKeys.details(), id] as const,
 };
@@ -16,7 +18,7 @@ export const postKeys = {
  */
 export function useInfinitePosts(searchTerm?: string) {
   return useInfiniteQuery({
-    queryKey: postKeys.list(searchTerm || ''),
+    queryKey: postKeys.infinite(searchTerm),
     queryFn: async ({ pageParam = 1 }) => {
       if (searchTerm) {
         return postService.searchPosts(searchTerm, pageParam, 10);
@@ -94,7 +96,7 @@ export function useDeletePost() {
  */
 export function usePosts(page: number = 1, limit: number = 10) {
   return useQuery({
-    queryKey: [...postKeys.lists(), page, limit],
+    queryKey: postKeys.list({ page, limit }),
     queryFn: () => postService.getAllPosts(page, limit),
   });
 }
