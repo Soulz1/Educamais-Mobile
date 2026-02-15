@@ -8,10 +8,8 @@ Cliente mobile para a plataforma EducaMais construído com Expo / React Native.
 - ✅ Feed de Posts com busca e rolagem infinita
 - ✅ Detalhes de Posts
 - ✅ Painel Admin para Professores (Criar/Editar/Excluir Posts)
-- ✅ Controle de acesso baseado em papel (Professor/Aluno)
-- 🔄 Scaffolding para CRUD de Professores e Alunos (em desenvolvimento)
 
-## 🛠️ Stack Tecnológica
+## 🛠️ Stack
 
 - **React Native** com **Expo** (SDK 54)
 - **TypeScript** (modo estrito)
@@ -139,9 +137,6 @@ O app espera os seguintes endpoints no backend:
 - `PUT /api/posts/:id` - Atualizar post (somente professores)
 - `DELETE /api/posts/:id` - Deletar post (somente professores)
 
-### Endpoints Futuros (scaffold)
-- Professores: `GET/POST/PUT/DELETE /api/teachers`
-- Alunos: `GET/POST/PUT/DELETE /api/students`
 ## 🧪 Desenvolvimento
 
 ### Linting
@@ -327,7 +322,6 @@ Após executar `npx expo start`:
 - ✅ Interceptors para adicionar token nas requisições
 - ✅ Logout automático em caso de 401
 - ✅ Persistência de sessão
-- ✅ Controle de acesso por papel (teacher/student)
 
 ### Posts (Feed)
 - ✅ Listagem de posts com paginação infinita
@@ -337,7 +331,7 @@ Após executar `npx expo start`:
 - ✅ Skeleton loading
 - ✅ Navegação para detalhes
 
-### Posts (Administração - Teachers Only)
+### Posts (Administração - Professores)
 - ✅ Listagem administrativa de posts
 - ✅ Criação de posts com validação (react-hook-form + zod)
 - ✅ Edição de posts com pré-carregamento de dados
@@ -363,13 +357,9 @@ Após executar `npx expo start`:
 ### Posts
 - `GET /api/posts?page=&limit=&q=` - Listar posts (com busca opcional)
 - `GET /api/posts/:id` - Detalhe do post
-- `POST /api/posts` - Criar post (teacher only)
-- `PUT /api/posts/:id` - Atualizar post (teacher only)
-- `DELETE /api/posts/:id` - Deletar post (teacher only)
-
-### Teachers/Students (Scaffolds - A implementar)
-- `GET/POST/PUT/DELETE /api/teachers`
-- `GET/POST/PUT/DELETE /api/students`
+- `POST /api/posts` - Criar post 
+- `PUT /api/posts/:id` - Atualizar post
+- `DELETE /api/posts/:id` - Deletar post 
 
 ## 🎨 Temas e Customização
 
@@ -417,7 +407,7 @@ npm install
 
 ## 📄 Licença
 
-Este projeto é parte do trabalho acadêmico da faculdade.
+Este projeto é parte do trabalho acadêmico da FIAP.
 
 ## 👥 Contribuidores
 
