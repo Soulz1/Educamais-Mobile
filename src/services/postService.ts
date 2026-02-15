@@ -8,7 +8,7 @@ import type { Post, PostsResponse } from '../types/models';
 
 class PostService {
   /**
-   * Buscar todos os posts com paginação
+   * Busca todos os posts com paginação
    */
   async getAllPosts(page: number = 1, limit: number = 10, query?: string): Promise<PostsResponse> {
     try {
@@ -31,13 +31,13 @@ class PostService {
   }
 
   /**
-   * Buscar um post específico pelo ID
+   * Busca um post específico pelo ID
    */
   async getPostById(postId: number): Promise<Post> {
     try {
       const response = await api.get<PostDetailResponse>(`/posts/${postId}`);
       const response = await api.get(`/posts/${postId}`);
-      // backend returns { success, data: Post }
+      // backend retorna { success, data: Post }
       return response.data.data;
     } catch (error) {
       console.error('❌ Erro ao buscar post:', error);
@@ -46,7 +46,7 @@ class PostService {
   }
 
   /**
-   * Buscar posts por termo de busca
+   * Busca posts por termo de busca
    */
   async searchPosts(searchTerm: string, page: number = 1, limit: number = 10): Promise<PostsResponse> {
   async searchPosts(searchTerm: string, page: number = 1, limit: number = 10): Promise<Post[]> {
@@ -62,7 +62,7 @@ class PostService {
   }
 
   /**
-   * Criar um novo post
+   * Cria um novo post
    */
   async createPost(data: CreatePostFormData): Promise<Post> {
   async createPost(data: { titulo: string; conteudo: string; descricao?: string }): Promise<Post> {
@@ -78,7 +78,7 @@ class PostService {
   }
 
   /**
-   * Atualizar um post existente
+   * Atualiza um post existente
    */
   async updatePost(postId: number, data: UpdatePostFormData): Promise<Post> {
   async updatePost(
@@ -97,7 +97,7 @@ class PostService {
   }
 
   /**
-   * Deletar um post
+   * Deleta um post
    */
   async deletePost(postId: number): Promise<void> {
     try {

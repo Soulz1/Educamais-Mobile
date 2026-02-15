@@ -137,7 +137,7 @@ function FeedScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Cabeçalho */}
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Bem-vindo!</Text>
@@ -161,7 +161,7 @@ function FeedScreen() {
         </View>
       </View>
 
-      {/* Search Bar */}
+      {/* Barra de busca */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
@@ -172,7 +172,7 @@ function FeedScreen() {
         />
       </View>
 
-      {/* Posts List */}
+      {/* Lista de posts */}
       <FlatList
         data={posts}
         keyExtractor={(item, index) => `${item.id}-${index}`}

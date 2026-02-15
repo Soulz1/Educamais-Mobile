@@ -42,7 +42,7 @@ export default function AdminPostEditScreen() {
     },
   });
 
-  // Guard: Only teachers can access
+  // Proteção: Apenas professores podem acessar
   useEffect(() => {
     if (!isTeacher) {
       Alert.alert('Acesso negado', 'Apenas professores podem editar posts.');
@@ -50,7 +50,7 @@ export default function AdminPostEditScreen() {
     }
   }, [isTeacher, navigation]);
 
-  // Load post data into form
+  // Carrega os dados do post no formulário
   useEffect(() => {
     if (post) {
       reset({
@@ -96,7 +96,7 @@ export default function AdminPostEditScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
-        {/* Header */}
+        {/* Cabeçalho */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Text style={styles.backButtonText}>← Cancelar</Text>
@@ -106,7 +106,7 @@ export default function AdminPostEditScreen() {
         </View>
 
         <View style={styles.content}>
-          {/* Post ID Info */}
+          {/* Informação do Post ID */}
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>Editando post #{post.id}</Text>
           </View>

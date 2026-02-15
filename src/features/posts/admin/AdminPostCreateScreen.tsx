@@ -35,7 +35,7 @@ export default function AdminPostCreateScreen() {
     },
   });
 
-  // Guard: Only teachers can access
+  // Proteção: Apenas professores podem acessar
   React.useEffect(() => {
     if (!isTeacher) {
       Alert.alert('Acesso negado', 'Apenas professores podem criar posts.');
@@ -65,7 +65,7 @@ export default function AdminPostCreateScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <ScrollView style={styles.scrollView} keyboardShouldPersistTaps="handled">
-        {/* Header */}
+        {/* Cabeçalho */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
             <Text style={styles.backButtonText}>← Cancelar</Text>

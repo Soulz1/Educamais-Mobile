@@ -9,16 +9,16 @@ export const Role = {
 
 export type RoleType = (typeof Role)[keyof typeof Role];
 
-// ==================== USER TYPES ====================
+// ==================== TIPOS DE USUÁRIO ====================
 
-// User Role enum
+// Enum de função de usuário
 export enum UserRole {
   TEACHER = 'teacher',
   STUDENT = 'student',
   ADMIN = 'admin',
 }
 
-// User type
+// Tipo de usuário
 export interface User {
   id: string;
   email: string;
@@ -35,21 +35,21 @@ export interface AuthResponse {
   role?: UserRole;
 }
 
-// Auth Response
+// Resposta de autenticação
 export interface AuthResponse {
   user: User;
   token: string;
 }
 
-// User Session
+// Sessão de usuário
 export interface UserSession {
   user: User;
   sessionToken: string;
 }
 
-// ==================== POST TYPES ====================
+// ==================== TIPOS DE POST ====================
 
-// Post type
+// Tipo de post
 export interface Post {
   id: number;
   titulo: string;
@@ -69,7 +69,7 @@ export interface Post {
   };
 }
 
-// Posts Response with pagination
+// Resposta de posts com paginação
 export interface PostsResponse {
   success: boolean;
   data: Post[];
@@ -86,9 +86,9 @@ export interface PostDetailResponse {
   data: Post;
 }
 
-// ==================== ZOD SCHEMAS ====================
+// ==================== SCHEMAS ZOD ====================
 
-// Auth Schemas
+// Schemas de autenticação
 export const loginSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
@@ -103,7 +103,7 @@ export interface Comment {
   updatedAt: string;
 }
 
-// Teacher type (scaffold for future CRUD)
+// Tipo de professor (estrutura para CRUD futuro)
 export interface Teacher {
   id: string;
   name: string;
@@ -114,7 +114,7 @@ export interface Teacher {
   updatedAt: string;
 }
 
-// Student type (scaffold for future CRUD)
+// Tipo de aluno (estrutura para CRUD futuro)
 export interface Student {
   id: string;
   name: string;
@@ -125,9 +125,9 @@ export interface Student {
   updatedAt: string;
 }
 
-// === Zod Schemas for Validation ===
+// === Schemas Zod para validação ===
 
-// Login Schema
+// Schema de login
 export const loginSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
@@ -143,7 +143,7 @@ export const signUpSchema = z.object({
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 
-// Post Schemas
+// Schemas de post
 export const createPostSchema = z.object({
   titulo: z.string().min(3, 'Título deve ter pelo menos 3 caracteres').max(200, 'Título muito longo'),
   conteudo: z.string().min(10, 'Conteúdo deve ter pelo menos 10 caracteres'),
@@ -155,14 +155,14 @@ export type CreatePostFormData = z.infer<typeof createPostSchema>;
 export const updatePostSchema = createPostSchema;
 export type UpdatePostFormData = z.infer<typeof updatePostSchema>;
 
-// ==================== API ERROR TYPES ====================
+// ==================== TIPOS DE ERRO DA API ====================
 
 export interface ApiError {
   message: string;
   statusCode?: number;
   errors?: Record<string, string[]>;
 }
-// Post Create/Edit Schema
+// Schema de criação/edição de post
 export const postSchema = z.object({
   titulo: z
     .string()
@@ -180,7 +180,7 @@ export const postSchema = z.object({
 
 export type PostFormData = z.infer<typeof postSchema>;
 
-// Comment Schema (for future use)
+// Schema de comentário (para uso futuro)
 export const commentSchema = z.object({
   content: z
     .string()
@@ -190,7 +190,7 @@ export const commentSchema = z.object({
 
 export type CommentFormData = z.infer<typeof commentSchema>;
 
-// Teacher Schema (scaffold)
+// Schema de professor (estrutura)
 export const teacherSchema = z.object({
   name: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres'),
   email: z.string().email('Email inválido'),
@@ -200,7 +200,7 @@ export const teacherSchema = z.object({
 
 export type TeacherFormData = z.infer<typeof teacherSchema>;
 
-// Student Schema (scaffold)
+// Schema de aluno (estrutura)
 export const studentSchema = z.object({
   name: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres'),
   email: z.string().email('Email inválido'),

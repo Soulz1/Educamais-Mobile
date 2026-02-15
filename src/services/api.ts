@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
 import { ApiError } from '../types/models';
 
-// Get API URL from environment
+// Obtém a URL da API do ambiente
 const API_URL = process.env.EXPO_PUBLIC_API_URL || Constants.expoConfig?.extra?.apiUrl || 'http://192.168.15.5:3333';
 
 const SESSION_KEY = '@educamais_session';
@@ -24,7 +24,7 @@ class ApiService {
   }
 
   private setupInterceptors() {
-    // Request interceptor: Add token to all requests
+    // Interceptor de requisição: Adiciona o token a todas as requisições
     this.api.interceptors.request.use(
       async (config) => {
         try {
@@ -34,26 +34,26 @@ class ApiService {
             config.headers.Authorization = `Bearer ${session.sessionToken}`;
           }
         } catch (error) {
-          console.error('Error getting token from SecureStore:', error);
+          console.error('Erro ao obter token do SecureStore:', error);
         }
         return config;
       },
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor: Handle 401 errors (logout user)
+    // Interceptor de resposta: Trata erros 401 (deslogar usuário)
     this.api.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
         if (error.response?.status === 401) {
-          // Clear session on 401
+          // Limpa a sessão em caso de 401
           try {
             await SecureStore.deleteItemAsync(SESSION_KEY);
           } catch (e) {
-            console.error('Error clearing session:', e);
+            console.error('Erro ao limpar sessão:', e);
           }
-          // You can emit an event or use navigation here to redirect to login
-          // For now, we'll just reject the error
+          // Você pode emitir um evento ou usar navegação aqui para redirecionar ao login
+          // Por enquanto, apenas rejeitamos o erro
         }
         return Promise.reject(this.handleError(error));
       }
@@ -62,7 +62,7 @@ class ApiService {
 
   private handleError(error: AxiosError): ApiError {
     if (error.response) {
-      // Server responded with error
+      // Servidor respondeu com erro
       const data = error.response.data as any;
       return {
         message: data?.message || 'Erro no servidor',
@@ -70,19 +70,19 @@ class ApiService {
         errors: data?.errors,
       };
     } else if (error.request) {
-      // Request made but no response
+      // Requisição feita mas sem resposta
       return {
         message: 'Sem resposta do servidor. Verifique sua conexão.',
       };
     } else {
-      // Something else happened
+      // Algo mais aconteceu
       return {
         message: error.message || 'Erro desconhecido',
       };
     }
   }
 
-  // Helper to set token manually
+  // Função auxiliar para definir o token manualmente
   public setAuthToken(token: string | null) {
     if (token) {
       this.api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -91,7 +91,7 @@ class ApiService {
     }
   }
 
-  // Helper to get API base URL
+  // Função auxiliar para obter a URL base da API
   public getBaseURL() {
     return API_URL;
   }
@@ -106,7 +106,7 @@ import Constants from 'expo-constants';
 const API_URL = Constants.expoConfig?.extra?.apiUrl || process.env.EXPO_PUBLIC_API_URL || 'http://192.168.15.5:3333';
 const SESSION_KEY = '@educamais_session';
 
-// Create axios instance
+// Cria instância do axios
 const api: AxiosInstance = axios.create({
   baseURL: `${API_URL}/api`,
   withCredentials: true,
@@ -115,7 +115,7 @@ const api: AxiosInstance = axios.create({
   },
 });
 
-// Request interceptor - Add auth token
+// Interceptor de requisição - Adiciona token de autenticação
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
@@ -134,20 +134,20 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor - Handle 401 errors
+// Interceptor de resposta - Trata erros 401
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid - clear session
+      // Token expirado ou inválido - limpa a sessão
       try {
         await SecureStore.deleteItemAsync(SESSION_KEY);
-        console.log('🔒 Session cleared due to 401');
+        console.log('🔒 Sessão limpa devido ao erro 401');
         
-        // Optionally trigger a logout event here
-        // You could use an event emitter or navigation to redirect to login
+        // Opcionalmente, dispara um evento de logout aqui
+        // Você pode usar um emissor de eventos ou navegação para redirecionar ao login
       } catch (e) {
-        console.error('Error clearing session:', e);
+        console.error('Erro ao limpar sessão:', e);
       }
     }
     return Promise.reject(error);

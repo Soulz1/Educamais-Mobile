@@ -20,7 +20,7 @@ class AuthService {
   private authApi = api;
 
   /**
-   * Fazer cadastro (Sign Up) com email e senha
+   * Faz cadastro (Sign Up) com email e senha
    */
   async signUp(credentials: SignUpCredentials): Promise<UserSession> {
     try {
@@ -37,13 +37,13 @@ class AuthService {
         sessionToken: response.data.token,
       };
 
-      // Save session to SecureStore
+      // Salva a sessão no SecureStore
       await storageService.saveSession(sessionData);
-      // Salvar sessão no SecureStore
+      // Salva a sessão no SecureStore
       await SecureStore.setItemAsync(this.sessionKey, JSON.stringify(sessionData));
-      console.log('✅ Session saved to SecureStore (SignUp)'); // DEBUG
+      console.log('✅ Sessão salva no SecureStore (SignUp)'); // DEBUG
 
-      // Atualizar header padrão com token
+      // Atualiza o header padrão com o token
       this.setAuthToken(sessionData.sessionToken);
 
       return sessionData;
@@ -53,7 +53,7 @@ class AuthService {
   }
 
   /**
-   * Fazer sign in com email e senha
+   * Faz login (Sign In) com email e senha
    */
   async signIn(credentials: AuthCredentials): Promise<UserSession> {
     try {
@@ -66,13 +66,13 @@ class AuthService {
         sessionToken: response.data.token,
       };
 
-      // Save session to SecureStore
+      // Salva a sessão no SecureStore
       await storageService.saveSession(sessionData);
-      // Salvar sessão no SecureStore
+      // Salva a sessão no SecureStore
       await SecureStore.setItemAsync(this.sessionKey, JSON.stringify(sessionData));
-      console.log('✅ Session saved to SecureStore (SignIn)'); // DEBUG
+      console.log('✅ Sessão salva no SecureStore (SignIn)'); // DEBUG
 
-      // Atualizar header padrão com token
+      // Atualiza o header padrão com o token
       this.setAuthToken(sessionData.sessionToken);
 
       return sessionData;
@@ -82,28 +82,28 @@ class AuthService {
   }
 
   /**
-   * Fazer logout
+   * Faz logout do usuário
    */
   async logout(): Promise<void> {
     try {
       await this.authApi.post('/auth/sign-out');
     } catch (error) {
-      console.error('Error during API logout:', error);
+      console.error('Erro durante logout na API:', error);
     } finally {
-      // Always clear local session
+      // Sempre limpa a sessão local
       await storageService.clearSession();
       await this.api.post('/sign-out');
       await SecureStore.deleteItemAsync(this.sessionKey);
       this.setAuthToken(null);
     } catch {
-      // Mesmo se falhar na API, limpar local
+      // Mesmo se falhar na API, limpa localmente
       await SecureStore.deleteItemAsync(this.sessionKey);
       this.setAuthToken(null);
     }
   }
 
   /**
-   * Verificar se há sessão salva
+   * Verifica se há uma sessão salva
    */
   async getSession(): Promise<UserSession | null> {
     return await storageService.getSession();
@@ -123,21 +123,21 @@ class AuthService {
   }
 
   /**
-   * Check if user has a specific role
+   * Verifica se o usuário tem uma função específica
    */
   hasRole(session: UserSession | null, role: string): boolean {
     return session?.user?.appRole === role;
   }
 
   /**
-   * Check if user is a teacher
+   * Verifica se o usuário é professor
    */
   isTeacher(session: UserSession | null): boolean {
     return this.hasRole(session, 'teacher');
   }
 
   /**
-   * Check if user is a student
+   * Verifica se o usuário é aluno
    */
   isStudent(session: UserSession | null): boolean {
     return this.hasRole(session, 'student');
