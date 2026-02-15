@@ -10,6 +10,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: 'educamaismobile',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
+  splash: {
+    image: './assets/images/splash-icon.png',
+    resizeMode: 'contain',
+    backgroundColor: '#ffffff',
+  },
   ios: {
     supportsTablet: true,
   },

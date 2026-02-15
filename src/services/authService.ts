@@ -1,6 +1,11 @@
 import { api } from './api';
 import { storageService } from './storage';
 import { AuthResponse, UserSession, ApiError } from '../types/models';
+import axios, { AxiosInstance } from 'axios';
+import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
+
+const API_URL = Constants.expoConfig?.extra?.apiUrl || process.env.EXPO_PUBLIC_API_URL || 'http://192.168.15.5:3333';
 
 interface AuthCredentials {
   email: string;
@@ -34,6 +39,12 @@ class AuthService {
 
       // Save session to SecureStore
       await storageService.saveSession(sessionData);
+      // Salvar sessão no SecureStore
+      await SecureStore.setItemAsync(this.sessionKey, JSON.stringify(sessionData));
+      console.log('✅ Session saved to SecureStore (SignUp)'); // DEBUG
+
+      // Atualizar header padrão com token
+      this.setAuthToken(sessionData.sessionToken);
 
       return sessionData;
     } catch (error) {
@@ -57,6 +68,12 @@ class AuthService {
 
       // Save session to SecureStore
       await storageService.saveSession(sessionData);
+      // Salvar sessão no SecureStore
+      await SecureStore.setItemAsync(this.sessionKey, JSON.stringify(sessionData));
+      console.log('✅ Session saved to SecureStore (SignIn)'); // DEBUG
+
+      // Atualizar header padrão com token
+      this.setAuthToken(sessionData.sessionToken);
 
       return sessionData;
     } catch (error) {
@@ -75,6 +92,13 @@ class AuthService {
     } finally {
       // Always clear local session
       await storageService.clearSession();
+      await this.api.post('/sign-out');
+      await SecureStore.deleteItemAsync(this.sessionKey);
+      this.setAuthToken(null);
+    } catch {
+      // Mesmo se falhar na API, limpar local
+      await SecureStore.deleteItemAsync(this.sessionKey);
+      this.setAuthToken(null);
     }
   }
 
@@ -83,6 +107,19 @@ class AuthService {
    */
   async getSession(): Promise<UserSession | null> {
     return await storageService.getSession();
+    try {
+      const sessionData = await SecureStore.getItemAsync(this.sessionKey);
+      console.log('Session from SecureStore:', sessionData); // DEBUG
+      if (sessionData) {
+        const session = JSON.parse(sessionData) as UserSession;
+        this.setAuthToken(session.sessionToken);
+        return session;
+      }
+      return null;
+    } catch (error) {
+      console.error('Erro ao recuperar sessão:', error);
+      return null;
+    }
   }
 
   /**
@@ -104,6 +141,13 @@ class AuthService {
    */
   isStudent(session: UserSession | null): boolean {
     return this.hasRole(session, 'student');
+  private handleError(error: any): Error {
+    // eslint-disable-next-line import/no-named-as-default-member
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.message || error.message;
+      return new Error(message);
+    }
+    return error;
   }
 }
 

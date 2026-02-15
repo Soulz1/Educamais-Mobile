@@ -1,4 +1,5 @@
 import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -20,6 +21,38 @@ function PostDetail() {
   const postId = route.params.postId;
 
   const { data: post, isLoading, isError, error, refetch } = usePost(postId);
+  const navigation = useNavigation<any>();
+  const route = useRoute();
+  const postId = (route.params as any)?.postId;
+
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadPost = useCallback(async () => {
+    try {
+      setLoading(true);
+      console.log('📝 Carregando post com ID:', postId);
+      const postData = await postService.getPostById(postId);
+      console.log('✅ Post carregado:', JSON.stringify(postData, null, 2));
+      setPost(postData);
+    } catch (error) {
+      console.error('❌ Erro ao carregar post:', error);
+      Alert.alert('Erro', 'Não foi possível carregar o post');
+      if (navigation.canGoBack && navigation.canGoBack()) {
+        navigation.goBack();
+      } else {
+        navigation.navigate('screens/Home/index' as any);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [postId, navigation]);
+
+  useEffect(() => {
+    if (postId) {
+      loadPost();
+    }
+  }, [postId, loadPost]);
 
   if (isLoading) {
     return (
@@ -112,6 +145,18 @@ function PostDetail() {
         <View style={styles.commentsPlaceholder}>
           <Text style={styles.commentsTitle}>💬 Comentários</Text>
           <Text style={styles.commentsText}>Em breve: Seção de comentários</Text>
+        {/* Comments Section - Placeholder */}
+        <View style={styles.commentsSection}>
+          <Text style={styles.commentsTitle}>💬 Comentários</Text>
+          <View style={styles.commentsPlaceholder}>
+            <Text style={styles.placeholderIcon}>🔨</Text>
+            <Text style={styles.placeholderText}>
+              Sistema de comentários em desenvolvimento
+            </Text>
+            <Text style={styles.placeholderSubtext}>
+              Em breve você poderá comentar neste post
+            </Text>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -219,6 +264,41 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
   commentsTitle: {
+  commentsSection: {
+    marginTop: 24,
+  },
+  commentsTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 16,
+  },
+  commentsPlaceholder: {
+    backgroundColor: '#f9f9f9',
+    padding: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    borderStyle: 'dashed',
+  },
+  placeholderIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  placeholderText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  placeholderSubtext: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+  },
+  errorText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',

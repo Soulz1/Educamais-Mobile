@@ -9,6 +9,9 @@ import PostDetail from '../app/screens/PostDetail/index'
 import AdminPostsList from '../app/screens/admin/PostsList/index'
 import AdminPostCreate from '../app/screens/admin/PostCreate/index'
 import AdminPostEdit from '../app/screens/admin/PostEdit/index'
+import AdminPostsListScreen from '../src/features/posts/admin/AdminPostsListScreen'
+import AdminPostCreateScreen from '../src/features/posts/admin/AdminPostCreateScreen'
+import AdminPostEditScreen from '../src/features/posts/admin/AdminPostEditScreen'
 
 export type RootStackParamList = {
   'screens/Login/index': undefined;
@@ -17,6 +20,9 @@ export type RootStackParamList = {
   'screens/admin/PostsList/index': undefined;
   'screens/admin/PostCreate/index': undefined;
   'screens/admin/PostEdit/index': { postId: number };
+  'AdminPostsList': undefined;
+  'AdminPostCreate': undefined;
+  'AdminPostEdit': { postId: number };
 };
 
 const { Navigator, Screen } = createNativeStackNavigator<RootStackParamList>()
@@ -67,6 +73,17 @@ export function AppRoutes(){
                 <Screen name="screens/admin/PostEdit/index"
                 component={AdminPostEdit}/>
               </>
+                <Screen name="AdminPostsList"
+                component={AdminPostsListScreen}/>
+                <Screen name="AdminPostCreate"
+                component={AdminPostCreateScreen}/>
+                <Screen name="AdminPostEdit"
+                component={AdminPostEditScreen}/>
+              </>
+            ) : (
+              // Usuário não autenticado
+              <Screen name="screens/Login/index"
+              component={Login}/>
             )}
         </Navigator>
     )
