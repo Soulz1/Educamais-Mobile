@@ -1,21 +1,13 @@
-# Students Feature
+# Feature de Alunos
 
-This directory will contain student-related features in future PRs.
+Este diretório conterá funcionalidades relacionadas a alunos em PRs futuros.
 
-## Planned Features
-- Student CRUD operations
-- Student listing and details
-- Student-specific screens and components
+## Funcionalidades Planejadas
+- Operações CRUD de alunos
+- Listagem e detalhes de alunos
+- Telas e componentes específicos para alunos
 
-## API Endpoints (planned)
-- GET /api/students - List students
-- POST /api/students - Create student
-- PUT /api/students/:id - Update student
-- DELETE /api/students/:id - Delete student
-- GET /api/students/:id - Get student details
-This directory will contain all student-related CRUD operations and screens.
-
-## Planned Structure
+## Estrutura Planejada
 
 ```
 src/features/students/
@@ -27,19 +19,19 @@ src/features/students/
     └── useStudents.ts
 ```
 
-## Endpoints (to be implemented)
+## Endpoints da API (a serem implementados)
 
-- `GET /api/students` - List all students
-- `GET /api/students/:id` - Get student details
-- `POST /api/students` - Create new student
-- `PUT /api/students/:id` - Update student
-- `DELETE /api/students/:id` - Delete student
+- `GET /api/students` - Listar todos os alunos
+- `GET /api/students/:id` - Obter detalhes do aluno
+- `POST /api/students` - Criar novo aluno
+- `PUT /api/students/:id` - Atualizar aluno
+- `DELETE /api/students/:id` - Deletar aluno
 
-## TODO
+## A FAZER
 
-- [ ] Create student service
-- [ ] Create React Query hooks
-- [ ] Implement list screen with search and filters
-- [ ] Implement detail screen
-- [ ] Implement create/edit screens with validation
-- [ ] Add to navigation
+- [ ] Criar serviço de alunos
+- [ ] Criar hooks React Query
+- [ ] Implementar tela de listagem com busca e filtros
+- [ ] Implementar tela de detalhes
+- [ ] Implementar telas de criar/editar com validação
+- [ ] Adicionar à navegação
