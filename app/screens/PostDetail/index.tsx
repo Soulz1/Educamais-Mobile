@@ -75,7 +75,7 @@ function PostDetail() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
+      {/* Cabeçalho */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
@@ -129,7 +129,7 @@ function PostDetail() {
         {/* Conteúdo */}
         <Text style={styles.conteudo}>{post.conteudo}</Text>
 
-        {/* Metadata */}
+        {/* Metadados */}
         <View style={styles.metadata}>
           <Text style={styles.metadataText}>
             ID do Post: {post.id}
@@ -141,11 +141,11 @@ function PostDetail() {
           )}
         </View>
 
-        {/* TODO: Comments section - placeholder for future implementation */}
+        {/* TODO: Seção de comentários - placeholder para implementação futura */}
         <View style={styles.commentsPlaceholder}>
           <Text style={styles.commentsTitle}>💬 Comentários</Text>
           <Text style={styles.commentsText}>Em breve: Seção de comentários</Text>
-        {/* Comments Section - Placeholder */}
+        {/* Seção de Comentários - Placeholder */}
         <View style={styles.commentsSection}>
           <Text style={styles.commentsTitle}>💬 Comentários</Text>
           <View style={styles.commentsPlaceholder}>

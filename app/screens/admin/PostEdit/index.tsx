@@ -42,7 +42,7 @@ function AdminPostEdit() {
     },
   });
 
-  // Populate form when post data is loaded
+  // Preenche o form quando os dados do post são carregados
   useEffect(() => {
     if (post) {
       reset({
@@ -98,7 +98,7 @@ function AdminPostEdit() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      {/* Header */}
+      {/* Cabeçalho */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Cancelar</Text>
@@ -109,7 +109,7 @@ function AdminPostEdit() {
 
       <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
         <View style={styles.form}>
-          {/* Post Info */}
+          {/* Info do Post */}
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>ID: {post.id}</Text>
             <Text style={styles.infoText}>
@@ -117,7 +117,7 @@ function AdminPostEdit() {
             </Text>
           </View>
 
-          {/* Título Field */}
+          {/* Campo Título */}
           <Controller
             control={control}
             name="titulo"
@@ -134,7 +134,7 @@ function AdminPostEdit() {
             )}
           />
 
-          {/* Descrição Field */}
+          {/* Campo Descrição */}
           <Controller
             control={control}
             name="descricao"
@@ -154,7 +154,7 @@ function AdminPostEdit() {
             )}
           />
 
-          {/* Conteúdo Field */}
+          {/* Campo Conteúdo */}
           <Controller
             control={control}
             name="conteudo"
@@ -176,7 +176,7 @@ function AdminPostEdit() {
 
           <Text style={styles.hint}>* Campos obrigatórios</Text>
 
-          {/* Submit Button */}
+          {/* Botão Enviar */}
           <Button
             title="Salvar Alterações"
             onPress={handleSubmit(onSubmit)}

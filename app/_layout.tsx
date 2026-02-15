@@ -7,13 +7,13 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Routes } from '@/routes/index';
 import { AuthProvider } from '@/src/contexts/AuthContext';
 
-// Create a client
+// Criar um client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+      staleTime: 1000 * 60 * 5, // 5 minutos
+      gcTime: 1000 * 60 * 10, // 10 minutos (anteriormente cacheTime)
     },
   },
 });

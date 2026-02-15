@@ -58,7 +58,7 @@ function AdminPostCreate() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      {/* Header */}
+      {/* Cabeçalho */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Cancelar</Text>
@@ -69,7 +69,7 @@ function AdminPostCreate() {
 
       <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
         <View style={styles.form}>
-          {/* Título Field */}
+          {/* Campo Título */}
           <Controller
             control={control}
             name="titulo"
@@ -86,7 +86,7 @@ function AdminPostCreate() {
             )}
           />
 
-          {/* Descrição Field */}
+          {/* Campo Descrição */}
           <Controller
             control={control}
             name="descricao"
@@ -106,7 +106,7 @@ function AdminPostCreate() {
             )}
           />
 
-          {/* Conteúdo Field */}
+          {/* Campo Conteúdo */}
           <Controller
             control={control}
             name="conteudo"
@@ -128,7 +128,7 @@ function AdminPostCreate() {
 
           <Text style={styles.hint}>* Campos obrigatórios</Text>
 
-          {/* Submit Button */}
+          {/* Botão Enviar */}
           <Button
             title="Criar Post"
             onPress={handleSubmit(onSubmit)}
