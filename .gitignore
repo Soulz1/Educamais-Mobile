@@ -17,6 +17,7 @@ yarn.lock
 .idea/
 .env
 .env.*
+!.env.example
 .expo/
 # macOS
 *.swp

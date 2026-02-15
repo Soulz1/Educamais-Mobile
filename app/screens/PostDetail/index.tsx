@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -33,11 +33,7 @@ function PostDetail() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadPost();
-  }, [postId]);
-
-  const loadPost = async () => {
+  const loadPost = useCallback(async () => {
     try {
       setLoading(true);
       console.log('📝 Carregando post com ID:', postId);
@@ -55,7 +51,13 @@ function PostDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [postId, navigation]);
+
+  useEffect(() => {
+    if (postId) {
+      loadPost();
+    }
+  }, [postId, loadPost]);
 
   if (loading) {
     return (
@@ -131,6 +133,20 @@ function PostDetail() {
               Atualizado em: {new Date(post.atualizacao).toLocaleDateString('pt-BR')}
             </Text>
           )}
+        </View>
+
+        {/* Comments Section - Placeholder */}
+        <View style={styles.commentsSection}>
+          <Text style={styles.commentsTitle}>💬 Comentários</Text>
+          <View style={styles.commentsPlaceholder}>
+            <Text style={styles.placeholderIcon}>🔨</Text>
+            <Text style={styles.placeholderText}>
+              Sistema de comentários em desenvolvimento
+            </Text>
+            <Text style={styles.placeholderSubtext}>
+              Em breve você poderá comentar neste post
+            </Text>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -221,6 +237,40 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#999',
     marginBottom: 4,
+  },
+  commentsSection: {
+    marginTop: 24,
+  },
+  commentsTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 16,
+  },
+  commentsPlaceholder: {
+    backgroundColor: '#f9f9f9',
+    padding: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+    borderStyle: 'dashed',
+  },
+  placeholderIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  placeholderText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  placeholderSubtext: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
   },
   errorText: {
     fontSize: 16,
