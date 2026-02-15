@@ -1,31 +1,26 @@
+import React from 'react';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
-  Alert,
   ScrollView,
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { postService } from '../../../src/services/postService';
+import { useNavigation, useRoute, NavigationProp, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../routes/app.routes';
+import { usePost } from '../../../src/hooks/usePosts';
+import { Loader, ErrorState } from '../../../src/components/common';
 
-interface Post {
-  id: number;
-  titulo: string;
-  conteudo: string;
-  autorId: string;
-  createdAt: string;
-  atualizacao: string;
-  autor?: {
-    name: string;
-    email: string;
-    appRole?: string;
-  };
-}
+type PostDetailNavigationProp = NavigationProp<RootStackParamList, 'screens/PostDetail/index'>;
+type PostDetailRouteProp = RouteProp<RootStackParamList, 'screens/PostDetail/index'>;
 
 function PostDetail() {
+  const navigation = useNavigation<PostDetailNavigationProp>();
+  const route = useRoute<PostDetailRouteProp>();
+  const postId = route.params.postId;
+
+  const { data: post, isLoading, isError, error, refetch } = usePost(postId);
   const navigation = useNavigation<any>();
   const route = useRoute();
   const postId = (route.params as any)?.postId;
@@ -59,18 +54,21 @@ function PostDetail() {
     }
   }, [postId, loadPost]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <Loader />
       </View>
     );
   }
 
-  if (!post) {
+  if (isError || !post) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Post não encontrado</Text>
+        <ErrorState
+          message={(error as any)?.message || 'Post não encontrado'}
+          onRetry={() => refetch()}
+        />
       </View>
     );
   }
@@ -81,10 +79,10 @@ function PostDetail() {
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => {
-            if (navigation.canGoBack && navigation.canGoBack()) {
+            if (navigation.canGoBack()) {
               navigation.goBack();
             } else {
-              navigation.navigate('screens/Home/index' as any);
+              navigation.navigate('screens/Home/index', { userName: '' });
             }
           }}
           style={styles.backButton}
@@ -120,6 +118,14 @@ function PostDetail() {
         {/* Divisor */}
         <View style={styles.divider} />
 
+        {/* Descrição (se houver) */}
+        {post.descricao && (
+          <>
+            <Text style={styles.descricao}>{post.descricao}</Text>
+            <View style={styles.divider} />
+          </>
+        )}
+
         {/* Conteúdo */}
         <Text style={styles.conteudo}>{post.conteudo}</Text>
 
@@ -135,6 +141,10 @@ function PostDetail() {
           )}
         </View>
 
+        {/* TODO: Comments section - placeholder for future implementation */}
+        <View style={styles.commentsPlaceholder}>
+          <Text style={styles.commentsTitle}>💬 Comentários</Text>
+          <Text style={styles.commentsText}>Em breve: Seção de comentários</Text>
         {/* Comments Section - Placeholder */}
         <View style={styles.commentsSection}>
           <Text style={styles.commentsTitle}>💬 Comentários</Text>
@@ -220,6 +230,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0e0e0',
     marginVertical: 16,
   },
+  descricao: {
+    fontSize: 15,
+    color: '#666',
+    lineHeight: 22,
+    fontStyle: 'italic',
+  },
   conteudo: {
     fontSize: 16,
     color: '#333',
@@ -232,12 +248,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderLeftWidth: 4,
     borderLeftColor: '#007AFF',
+    marginBottom: 24,
   },
   metadataText: {
     fontSize: 11,
     color: '#999',
     marginBottom: 4,
   },
+  commentsPlaceholder: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderStyle: 'dashed',
+  },
+  commentsTitle: {
   commentsSection: {
     marginTop: 24,
   },
@@ -274,7 +300,12 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  commentsText: {
+    fontSize: 14,
     color: '#999',
-    textAlign: 'center',
   },
 });

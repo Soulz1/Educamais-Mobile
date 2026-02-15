@@ -1,3 +1,8 @@
+import { api } from './api';
+import { Post, PostsResponse, PostDetailResponse, CreatePostFormData, UpdatePostFormData } from '../types/models';
+
+class PostService {
+
 import api from './api';
 import type { Post, PostsResponse } from '../types/models';
 
@@ -5,14 +10,20 @@ class PostService {
   /**
    * Buscar todos os posts com paginação
    */
-  async getAllPosts(page: number = 1, limit: number = 10): Promise<Post[]> {
+  async getAllPosts(page: number = 1, limit: number = 10, query?: string): Promise<PostsResponse> {
     try {
+      const params: Record<string, string | number> = { page, limit };
+      if (query) {
+        params.q = query;
+      }
+
+      const response = await api.get<PostsResponse>('/posts', { params });
       const response = await api.get<PostsResponse>('/posts', {
         params: { page, limit },
       });
 
       console.log(`📝 Posts fetched: ${response.data.data.length} posts`);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       console.error('❌ Erro ao buscar posts:', error);
       throw error;
@@ -24,6 +35,7 @@ class PostService {
    */
   async getPostById(postId: number): Promise<Post> {
     try {
+      const response = await api.get<PostDetailResponse>(`/posts/${postId}`);
       const response = await api.get(`/posts/${postId}`);
       // backend returns { success, data: Post }
       return response.data.data;
@@ -36,6 +48,7 @@ class PostService {
   /**
    * Buscar posts por termo de busca
    */
+  async searchPosts(searchTerm: string, page: number = 1, limit: number = 10): Promise<PostsResponse> {
   async searchPosts(searchTerm: string, page: number = 1, limit: number = 10): Promise<Post[]> {
     try {
       const response = await api.get<PostsResponse>('/posts', {
@@ -51,6 +64,7 @@ class PostService {
   /**
    * Criar um novo post
    */
+  async createPost(data: CreatePostFormData): Promise<Post> {
   async createPost(data: { titulo: string; conteudo: string; descricao?: string }): Promise<Post> {
     try {
       const response = await api.post<{ success: boolean; data: Post }>('/posts', data);
@@ -66,6 +80,7 @@ class PostService {
   /**
    * Atualizar um post existente
    */
+  async updatePost(postId: number, data: UpdatePostFormData): Promise<Post> {
   async updatePost(
     postId: number,
     data: { titulo: string; conteudo: string; descricao?: string }

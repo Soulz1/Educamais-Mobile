@@ -6,6 +6,17 @@ interface ErrorStateProps {
   onRetry?: () => void;
 }
 
+export const ErrorState: React.FC<ErrorStateProps> = ({
+  message = 'Algo deu errado. Tente novamente.',
+  onRetry,
+}) => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.emoji}>⚠️</Text>
+      <Text style={styles.message}>{message}</Text>
+      {onRetry && (
+        <TouchableOpacity style={styles.button} onPress={onRetry} activeOpacity={0.8}>
+          <Text style={styles.buttonText}>Tentar Novamente</Text>
 export default function ErrorState({ 
   message = 'Algo deu errado. Tente novamente.', 
   onRetry 
@@ -21,6 +32,7 @@ export default function ErrorState({
       )}
     </View>
   );
+};
 }
 
 const styles = StyleSheet.create({
@@ -28,6 +40,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 40,
+  },
+  emoji: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  message: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  button: {
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
@@ -47,6 +72,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
   },
+  buttonText: {
   retryText: {
     color: '#fff',
     fontSize: 16,

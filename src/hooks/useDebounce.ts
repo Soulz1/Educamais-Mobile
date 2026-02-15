@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
+ * Hook to debounce a value
  * Hook para criar um valor com debounce
  * @param value - Valor a ser debounced
  * @param delay - Delay em milissegundos (padrão: 500ms)

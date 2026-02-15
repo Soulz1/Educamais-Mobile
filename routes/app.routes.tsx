@@ -6,6 +6,9 @@ import { ActivityIndicator, View } from 'react-native'
 import Login from '../app/screens/Login/index'
 import Home from '../app/screens/Home/index'
 import PostDetail from '../app/screens/PostDetail/index'
+import AdminPostsList from '../app/screens/admin/PostsList/index'
+import AdminPostCreate from '../app/screens/admin/PostCreate/index'
+import AdminPostEdit from '../app/screens/admin/PostEdit/index'
 import AdminPostsListScreen from '../src/features/posts/admin/AdminPostsListScreen'
 import AdminPostCreateScreen from '../src/features/posts/admin/AdminPostCreateScreen'
 import AdminPostEditScreen from '../src/features/posts/admin/AdminPostEditScreen'
@@ -14,6 +17,9 @@ export type RootStackParamList = {
   'screens/Login/index': undefined;
   'screens/Home/index': { userName: string };
   'screens/PostDetail/index': { postId: number };
+  'screens/admin/PostsList/index': undefined;
+  'screens/admin/PostCreate/index': undefined;
+  'screens/admin/PostEdit/index': { postId: number };
   'AdminPostsList': undefined;
   'AdminPostCreate': undefined;
   'AdminPostEdit': { postId: number };
@@ -42,6 +48,31 @@ export function AppRoutes(){
                 component={Home}/>
                 <Screen name="screens/PostDetail/index"
                 component={PostDetail}/>
+                <Screen name="screens/admin/PostsList/index"
+                component={AdminPostsList}/>
+                <Screen name="screens/admin/PostCreate/index"
+                component={AdminPostCreate}/>
+                <Screen name="screens/admin/PostEdit/index"
+                component={AdminPostEdit}/>
+                <Screen name="screens/Login/index"
+                component={Login}/>
+              </>
+            ) : (
+              // Usuário não autenticado
+              <>
+                <Screen name="screens/Login/index"
+                component={Login}/>
+                <Screen name="screens/Home/index"
+                component={Home}/>
+                <Screen name="screens/PostDetail/index"
+                component={PostDetail}/>
+                <Screen name="screens/admin/PostsList/index"
+                component={AdminPostsList}/>
+                <Screen name="screens/admin/PostCreate/index"
+                component={AdminPostCreate}/>
+                <Screen name="screens/admin/PostEdit/index"
+                component={AdminPostEdit}/>
+              </>
                 <Screen name="AdminPostsList"
                 component={AdminPostsListScreen}/>
                 <Screen name="AdminPostCreate"
