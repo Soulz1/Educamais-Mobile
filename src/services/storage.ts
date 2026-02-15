@@ -5,20 +5,20 @@ const SESSION_KEY = '@educamais_session';
 
 class StorageService {
   /**
-   * Save user session securely
+   * Salva a sessão do usuário de forma segura
    */
   async saveSession(session: UserSession): Promise<void> {
     try {
       await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(session));
-      console.log('✅ Session saved to SecureStore');
+      console.log('✅ Sessão salva no SecureStore');
     } catch (error) {
-      console.error('❌ Error saving session to SecureStore:', error);
+      console.error('❌ Erro ao salvar sessão no SecureStore:', error);
       throw error;
     }
   }
 
   /**
-   * Get saved user session
+   * Obtém a sessão do usuário salva
    */
   async getSession(): Promise<UserSession | null> {
     try {
@@ -28,26 +28,26 @@ class StorageService {
       }
       return null;
     } catch (error) {
-      console.error('❌ Error getting session from SecureStore:', error);
+      console.error('❌ Erro ao obter sessão do SecureStore:', error);
       return null;
     }
   }
 
   /**
-   * Remove user session
+   * Remove a sessão do usuário
    */
   async clearSession(): Promise<void> {
     try {
       await SecureStore.deleteItemAsync(SESSION_KEY);
-      console.log('✅ Session cleared from SecureStore');
+      console.log('✅ Sessão removida do SecureStore');
     } catch (error) {
-      console.error('❌ Error clearing session from SecureStore:', error);
+      console.error('❌ Erro ao limpar sessão do SecureStore:', error);
       throw error;
     }
   }
 
   /**
-   * Check if a session exists
+   * Verifica se existe uma sessão salva
    */
   async hasSession(): Promise<boolean> {
     try {

@@ -3,7 +3,7 @@ import { postService } from '../services/postService';
 import { CreatePostFormData, UpdatePostFormData } from '../types/models';
 import type { PostFormData } from '../types/models';
 
-// Query keys
+// Chaves para queries
 export const postKeys = {
   all: ['posts'] as const,
   lists: () => [...postKeys.all, 'list'] as const,
@@ -16,18 +16,18 @@ export const postKeys = {
 };
 
 /**
- * Hook to fetch posts with pagination
+ * Hook para buscar posts com paginação
  */
 export function usePosts(page: number = 1, limit: number = 10, query?: string) {
   return useQuery({
     queryKey: postKeys.list({ page, query }),
     queryFn: () => postService.getAllPosts(page, limit, query),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutos
   });
 }
 
 /**
- * Hook to fetch posts with infinite scroll
+ * Hook para buscar posts com scroll infinito
  */
 export function useInfinitePosts(limit: number = 10, query?: string) {
   return useInfiniteQuery({
@@ -46,7 +46,7 @@ export function useInfinitePosts(limit: number = 10, query?: string) {
 }
 
 /**
- * Hook to fetch a single post by ID
+ * Hook para buscar um único post pelo ID
  * Hook para buscar posts com paginação infinita
  */
 export function useInfinitePosts(searchTerm?: string) {
@@ -59,7 +59,7 @@ export function useInfinitePosts(searchTerm?: string) {
       return postService.getAllPosts(pageParam, 10);
     },
     getNextPageParam: (lastPage, allPages) => {
-      // If the last page has less than 10 items, we've reached the end
+      // Se a última página tem menos de 10 itens, chegamos ao fim
       return lastPage.length === 10 ? allPages.length + 1 : undefined;
     },
     initialPageParam: 1,
@@ -92,10 +92,10 @@ export function useCreatePost() {
   return useMutation({
     mutationFn: (data: CreatePostFormData) => postService.createPost(data),
     onSuccess: () => {
-      // Invalidate all post lists
+      // Invalida todas as listas de posts
     mutationFn: (data: PostFormData) => postService.createPost(data),
     onSuccess: () => {
-      // Invalidate all post lists to refetch
+      // Invalida todas as listas de posts para recarregar
       queryClient.invalidateQueries({ queryKey: postKeys.lists() });
     },
   });
@@ -112,13 +112,13 @@ export function useUpdatePost() {
     mutationFn: ({ postId, data }: { postId: number; data: UpdatePostFormData }) =>
       postService.updatePost(postId, data),
     onSuccess: (_, variables) => {
-      // Invalidate specific post detail
+      // Invalida o detalhe do post específico
       queryClient.invalidateQueries({ queryKey: postKeys.detail(variables.postId) });
-      // Invalidate all post lists
+      // Invalida todas as listas de posts
     mutationFn: ({ postId, data }: { postId: number; data: PostFormData }) =>
       postService.updatePost(postId, data),
     onSuccess: (_, variables) => {
-      // Invalidate the specific post and all lists
+      // Invalida o post específico e todas as listas
       queryClient.invalidateQueries({ queryKey: postKeys.detail(variables.postId) });
       queryClient.invalidateQueries({ queryKey: postKeys.lists() });
     },
@@ -135,21 +135,13 @@ export function useDeletePost() {
   return useMutation({
     mutationFn: (postId: number) => postService.deletePost(postId),
     onSuccess: () => {
-      // Invalidate all post lists
+      // Invalida todas as listas de posts
       queryClient.invalidateQueries({ queryKey: postKeys.lists() });
     },
   });
 }
 
 /**
- * Hook to search posts
- */
-export function useSearchPosts(searchTerm: string, page: number = 1, limit: number = 10) {
-  return useQuery({
-    queryKey: postKeys.list({ page, query: searchTerm }),
-    queryFn: () => postService.searchPosts(searchTerm, page, limit),
-    enabled: searchTerm.length > 0,
-    staleTime: 1000 * 60 * 5,
  * Hook para buscar posts (sem paginação infinita - para casos simples)
  */
 export function usePosts(page: number = 1, limit: number = 10) {

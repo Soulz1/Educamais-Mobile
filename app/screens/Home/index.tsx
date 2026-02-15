@@ -39,7 +39,7 @@ function Home() {
     isRefetching,
   } = useInfinitePosts(10, debouncedSearch || undefined);
 
-  // Flatten all pages into a single array
+  // Unir todas as páginas em um único array
   const posts = data?.pages.flatMap((page) => page.data) ?? [];
 
   const handleLogout = async () => {
@@ -61,7 +61,7 @@ function Home() {
   };
 
   const renderPostItem = ({ item }: { item: Post }) => {
-    // Use description if available, otherwise use first 200 chars of content
+    // Usa a descrição se disponível, caso contrário usa os primeiros 200 caracteres do conteúdo
     const preview = item.descricao || (item.conteudo.length > 200 
       ? item.conteudo.substring(0, 200) + '...' 
       : item.conteudo);
@@ -123,7 +123,7 @@ function Home() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Cabeçalho */}
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Bem-vindo!</Text>
@@ -142,7 +142,7 @@ function Home() {
         </TouchableOpacity>
       </View>
 
-      {/* Search Bar */}
+      {/* Barra de Busca */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
@@ -161,7 +161,7 @@ function Home() {
         )}
       </View>
 
-      {/* Admin Button - Only for teachers */}
+      {/* Botão Admin - Apenas para professores */}
       {user?.appRole === 'teacher' && (
         <View style={styles.adminButtonContainer}>
           <TouchableOpacity
@@ -173,7 +173,7 @@ function Home() {
         </View>
       )}
 
-      {/* Posts List */}
+      {/* Lista de Posts */}
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
@@ -340,6 +340,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
 });
-// Re-export FeedScreen as the Home screen
+// Re-exporta FeedScreen como tela Home
 export { default } from '../../../src/features/posts/FeedScreen';
 

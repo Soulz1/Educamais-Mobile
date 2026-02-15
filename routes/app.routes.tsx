@@ -30,7 +30,7 @@ const { Navigator, Screen } = createNativeStackNavigator<RootStackParamList>()
 export function AppRoutes(){
     const { isSignedIn, isLoading } = useAuth()
 
-    // Mostrar carregamento enquanto verifica sessão
+    // Mostra carregamento enquanto verifica a sessão
     if (isLoading) {
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

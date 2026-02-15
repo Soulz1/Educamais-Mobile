@@ -1,41 +1,25 @@
 # EducaMais Mobile
 
-Mobile client for the EducaMais platform built with Expo / React Native.
+Cliente mobile para a plataforma EducaMais construído com Expo / React Native.
 
-## 📋 Features
+## 📋 Funcionalidades
 
-- ✅ Authentication (Login/Sign Up with secure token storage)
-- ✅ Posts Feed with search and infinite scroll
-- ✅ Post Details
-- ✅ Admin Panel for Teachers (Create/Edit/Delete Posts)
-- ✅ Role-based access control (Teacher/Student)
-- 🔄 Scaffolding for Teachers and Students CRUD (coming in future PRs)
+- ✅ Autenticação (Login/Cadastro com armazenamento seguro de token)
+- ✅ Feed de Posts com busca e rolagem infinita
+- ✅ Detalhes de Posts
+- ✅ Painel Admin para Professores (Criar/Editar/Excluir Posts)
+- ✅ Controle de acesso baseado em papel (Professor/Aluno)
+- 🔄 Scaffolding para CRUD de Professores e Alunos (em desenvolvimento)
 
-## 🛠️ Tech Stack
+## 🛠️ Stack Tecnológica
 
-- **React Native** with **Expo** (SDK 54)
-- **TypeScript** (strict mode)
+- **React Native** com **Expo** (SDK 54)
+- **TypeScript** (modo estrito)
 - **React Navigation** (Stack Navigator)
-- **TanStack Query** (React Query) for data fetching and caching
-- **React Hook Form** + **Zod** for form validation
-- **Expo Secure Store** for secure token storage
-- **Axios** for HTTP requests
-
-## 📦 Prerequisites
-
-- Node.js (v18+ recommended)
-- npm or yarn
-- Android Studio (for Android emulator) or Xcode (for iOS simulator)
-- Expo CLI (optional but recommended): `npm install -g expo-cli`
-
-## 🚀 Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Educamais-Mobile
-   ```
-Mobile client for the EducaMais platform built with Expo and React Native.
+- **TanStack Query** (React Query) para busca e cache de dados
+- **React Hook Form** + **Zod** para validação de formulários
+- **Expo Secure Store** para armazenamento seguro de tokens
+- **Axios** para requisições HTTP
 
 ## 📋 Requisitos
 
@@ -46,239 +30,211 @@ Mobile client for the EducaMais platform built with Expo and React Native.
 
 ## 🚀 Instalação
 
-### 1. Instalar dependências
+### 1. Clonar o repositório
+   ```bash
+   git clone <repository-url>
+   cd Educamais-Mobile
+   ```
 
-2. **Install dependencies**
+### 2. Instalar dependências
    ```bash
    npm ci
-   # or
+   # ou
    npm install
    ```
 
-3. **Set up environment variables**
+### 3. Configurar variáveis de ambiente
    
-   Copy `.env.example` to `.env` and configure your API URL:
+   Copie `.env.example` para `.env` e configure a URL da API:
    ```bash
    cp .env.example .env
    ```
    
-   Edit `.env` and set your backend API URL:
+   Edite o arquivo `.env` e defina a URL da sua API backend:
    ```env
    EXPO_PUBLIC_API_URL=http://192.168.x.x:3333
    ```
    
-   **Important**: For Android emulator, use your machine's local network IP address (not `localhost`).
+   **Importante**: Para emulador Android, use o endereço IP da sua máquina na rede local (não use `localhost`).
 
-## 🏃 Running the App
+## 🏃 Executando o App
 
-### Start the Metro bundler
-```bash
-npm start
-# or
-npx expo start
-```
-
-### Run on Android Emulator
-
-1. **Start Android Studio and launch an Android emulator**
-
-2. **Run the app**
-   ```bash
-   npm run android
-   # or
-   npx expo start --android
-   ```
-
-### Run on iOS Simulator (macOS only)
-
-```bash
-npm run ios
-# or
-npx expo start --ios
-```
-
-### Run on Physical Device
-
-1. Install **Expo Go** app on your device
-2. Scan the QR code shown in the terminal after running `npm start`
-
-## 🔐 Authentication
-
-The app uses secure token storage via **expo-secure-store**. Upon successful login, the session token is stored securely and automatically included in all API requests.
-
-### Available Roles
-- **teacher**: Can create, edit, and delete posts
-- **student**: Can view posts (CRUD operations restricted)
-
-## 📱 App Structure
-
-```
-src/
-├── components/          # Reusable UI components
-│   └── common/         # Button, Input, Loader, EmptyState, ErrorState
-├── contexts/           # React contexts (AuthContext)
-├── features/           # Feature-specific code
-│   ├── students/       # Student features (scaffold)
-│   └── teachers/       # Teacher features (scaffold)
-├── hooks/              # Custom React hooks (usePosts, useDebounce)
-├── services/           # API services (api, auth, storage, posts)
-└── types/              # TypeScript types and Zod schemas
-
-app/
-└── screens/            # Screen components
-    ├── Home/          # Feed screen with search and infinite scroll
-    ├── Login/         # Authentication screen
-    ├── PostDetail/    # Post detail screen
-    └── admin/         # Admin screens (teacher-only)
-        ├── PostsList/
-        ├── PostCreate/
-        └── PostEdit/
-```
-
-## 🌐 API Integration
-
-The app expects the following backend endpoints:
-
-### Authentication
-- `POST /api/auth/sign-in/email` - Sign in
-- `POST /api/auth/sign-up/email` - Sign up
-- `POST /api/auth/sign-out` - Sign out
-
-### Posts
-- `GET /api/posts?page=1&limit=10&q=search` - List posts (with pagination and search)
-- `GET /api/posts/:id` - Get post details
-- `POST /api/posts` - Create post (teacher only)
-- `PUT /api/posts/:id` - Update post (teacher only)
-- `DELETE /api/posts/:id` - Delete post (teacher only)
-
-### Future Endpoints (scaffolded)
-- Teachers: `GET/POST/PUT/DELETE /api/teachers`
-- Students: `GET/POST/PUT/DELETE /api/students`
-### 2. Configurar variáveis de ambiente
-
-Crie um arquivo `.env` na raiz do projeto baseado no `.env.example`:
-
-```bash
-cp .env.example .env
-```
-
-Edite o arquivo `.env` e configure a URL da API:
-
-```env
-EXPO_PUBLIC_API_URL=http://192.168.1.100:3333
-```
-
-**Importante para Android Emulator:**
-- Não use `localhost` ou `127.0.0.1`
-- Use o IP da sua máquina na rede local (ex: `192.168.1.100`)
-- Para descobrir seu IP:
-  - Windows: `ipconfig`
-  - macOS/Linux: `ifconfig` ou `ip addr`
-
-### 3. Iniciar o aplicativo
-
-## 🧪 Development
-
-### Linting
+### Iniciar o Metro bundler
 ```bash
 npm start
 # ou
 npx expo start
 ```
 
-### Type Checking
-TypeScript is configured with `strict: true` for maximum type safety.
+### Executar no Emulador Android
 
-## 🔧 Environment Variables
+1. **Inicie o Android Studio e abra um emulador Android**
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `EXPO_PUBLIC_API_URL` | Backend API base URL | `http://192.168.1.100:3333` |
+2. **Execute o app**
+   ```bash
+   npm run android
+   # ou
+   npx expo start --android
+   ```
 
-### Finding Your Local IP Address
+### Executar no Simulador iOS (somente macOS)
+
+```bash
+npm run ios
+# ou
+npx expo start --ios
+```
+
+### Executar em Dispositivo Físico
+
+1. Instale o app **Expo Go** no seu dispositivo
+2. Escaneie o código QR mostrado no terminal após executar `npm start`
+
+## 🔐 Autenticação
+
+O app usa armazenamento seguro de tokens via **expo-secure-store**. Após login bem-sucedido, o token da sessão é armazenado de forma segura e automaticamente incluído em todas as requisições à API.
+
+### Papéis Disponíveis
+- **teacher**: Pode criar, editar e excluir posts
+- **student**: Pode visualizar posts (operações CRUD restritas)
+
+## 📱 Estrutura do App
+
+```
+src/
+├── components/          # Componentes UI reutilizáveis
+│   └── common/         # Button, Input, Loader, EmptyState, ErrorState
+├── contexts/           # Contextos React (AuthContext)
+├── features/           # Código específico de funcionalidades
+│   ├── students/       # Funcionalidades de alunos (scaffold)
+│   └── teachers/       # Funcionalidades de professores (scaffold)
+├── hooks/              # Hooks React customizados (usePosts, useDebounce)
+├── services/           # Serviços de API (api, auth, storage, posts)
+└── types/              # Tipos TypeScript e schemas Zod
+
+app/
+└── screens/            # Componentes de tela
+    ├── Home/          # Tela de feed com busca e rolagem infinita
+    ├── Login/         # Tela de autenticação
+    ├── PostDetail/    # Tela de detalhes do post
+    └── admin/         # Telas de admin (somente professores)
+        ├── PostsList/
+        ├── PostCreate/
+        └── PostEdit/
+```
+
+## 🌐 Integração com API
+
+O app espera os seguintes endpoints no backend:
+
+### Autenticação
+- `POST /api/auth/sign-in/email` - Fazer login
+- `POST /api/auth/sign-up/email` - Fazer cadastro
+- `POST /api/auth/sign-out` - Fazer logout
+
+### Posts
+- `GET /api/posts?page=1&limit=10&q=search` - Listar posts (com paginação e busca)
+- `GET /api/posts/:id` - Obter detalhes do post
+- `POST /api/posts` - Criar post (somente professores)
+- `PUT /api/posts/:id` - Atualizar post (somente professores)
+- `DELETE /api/posts/:id` - Deletar post (somente professores)
+
+### Endpoints Futuros (scaffold)
+- Professores: `GET/POST/PUT/DELETE /api/teachers`
+- Alunos: `GET/POST/PUT/DELETE /api/students`
+## 🧪 Desenvolvimento
+
+### Linting
+```bash
+npm run lint
+```
+
+### Verificação de Tipos
+TypeScript está configurado com `strict: true` para máxima segurança de tipos.
+
+## 🔧 Variáveis de Ambiente
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `EXPO_PUBLIC_API_URL` | URL base da API backend | `http://192.168.1.100:3333` |
+
+### Encontrando seu Endereço IP Local
 
 **Windows (PowerShell)**:
 ```powershell
 ipconfig
-# Look for "IPv4 Address" under your active network adapter
+# Procure por "Endereço IPv4" no adaptador de rede ativo
 ```
 
 **macOS/Linux**:
 ```bash
 ifconfig | grep "inet "
-# Look for your local network IP (usually starts with 192.168.x.x)
+# Procure pelo IP da sua rede local (geralmente começa com 192.168.x.x)
 ```
 
-Then use this IP in your `.env` file:
+Então use este IP no seu arquivo `.env`:
 ```env
 EXPO_PUBLIC_API_URL=http://192.168.x.x:3333
 ```
 
-## 📝 Usage
+## 📝 Como Usar
 
-### Login Flow
-1. Open the app
-2. Enter email and password
-3. Click "Entrar" to sign in or "Cadastre-se" to create an account
-4. Upon successful authentication, you'll be redirected to the Feed
+### Fluxo de Login
+1. Abra o app
+2. Digite email e senha
+3. Clique em "Entrar" para fazer login ou "Cadastre-se" para criar uma conta
+4. Após autenticação bem-sucedida, você será redirecionado para o Feed
 
-### Viewing Posts
-- The Feed screen shows all posts with infinite scroll
-- Use the search bar to filter posts by keyword (with debounce)
-- Pull down to refresh the list
-- Tap on any post to view full details
+### Visualizando Posts
+- A tela de Feed mostra todos os posts com rolagem infinita
+- Use a barra de busca para filtrar posts por palavra-chave (com debounce)
+- Puxe para baixo para atualizar a lista
+- Toque em qualquer post para ver os detalhes completos
 
-### Admin Panel (Teachers Only)
-1. On the Feed screen, tap "⚙️ Administrar Posts"
-2. View all posts with edit/delete options
-3. Tap "➕ Novo Post" to create a new post
-4. Tap "✏️ Editar" to edit an existing post
-5. Tap "🗑️ Excluir" to delete a post (with confirmation)
+### Painel Admin (Somente Professores)
+1. Na tela de Feed, toque em "⚙️ Administrar Posts"
+2. Visualize todos os posts com opções de editar/excluir
+3. Toque em "➕ Novo Post" para criar um novo post
+4. Toque em "✏️ Editar" para editar um post existente
+5. Toque em "🗑️ Excluir" para deletar um post (com confirmação)
 
-## 🔍 Key Features Explained
+## 🔍 Principais Funcionalidades Explicadas
 
-### Search with Debounce
-The search functionality includes a 500ms debounce to avoid excessive API calls while typing.
+### Busca com Debounce
+A funcionalidade de busca inclui um debounce de 500ms para evitar chamadas excessivas à API enquanto digita.
 
-### Infinite Scroll
-Posts are loaded in pages of 10. As you scroll down, more posts are automatically fetched.
+### Rolagem Infinita
+Posts são carregados em páginas de 10. Conforme você rola para baixo, mais posts são automaticamente buscados.
 
-### Pull to Refresh
-Pull down on the Feed to refresh the post list.
+### Puxar para Atualizar
+Puxe para baixo no Feed para atualizar a lista de posts.
 
-### Form Validation
-All forms use Zod schemas for validation:
-- Post title: 3-200 characters
-- Post content: minimum 10 characters
-- Post description: optional, max 500 characters
+### Validação de Formulários
+Todos os formulários usam schemas Zod para validação:
+- Título do post: 3-200 caracteres
+- Conteúdo do post: mínimo 10 caracteres
+- Descrição do post: opcional, máximo 500 caracteres
 
-### Role-Based Access
-- Students can only view posts
-- Teachers can create, edit, and delete posts
-- Admin screens are accessible only to teachers
+### Acesso Baseado em Papel
+- Alunos podem apenas visualizar posts
+- Professores podem criar, editar e deletar posts
+- Telas de admin são acessíveis apenas para professores
 
-## 🐛 Troubleshooting
+## 🐛 Solução de Problemas
 
-### Cannot connect to backend
-- Ensure your backend is running
-- Check that `EXPO_PUBLIC_API_URL` uses your local network IP (not localhost)
-- Ensure both your development machine and test device/emulator are on the same network
+### Não consegue conectar ao backend
+- Certifique-se de que seu backend está rodando
+- Verifique se `EXPO_PUBLIC_API_URL` usa o IP da sua rede local (não localhost)
+- Garanta que sua máquina de desenvolvimento e dispositivo/emulador de teste estão na mesma rede
 
-### Session not persisting
-- Clear app data and try logging in again
-- Check console logs for SecureStore errors
+### Sessão não persiste
+- Limpe os dados do app e tente fazer login novamente
+- Verifique os logs do console para erros do SecureStore
 
-### Build errors
-- Clear cache: `npx expo start -c`
-- Delete node_modules and reinstall: `rm -rf node_modules && npm install`
+### Erros de build
+- Limpe o cache: `npx expo start -c`
+- Delete node_modules e reinstale: `rm -rf node_modules && npm install`
 
-## 📄 License
-
-[Add your license here]
-
-## 👥 Contributors
-
-[Add contributors here]
 ## 📱 Executando no Android Studio
 
 ### Setup do Emulador Android
@@ -452,8 +408,8 @@ npm install
 
 ## 📝 Próximos Passos
 
-- [ ] Implementar CRUD completo de Teachers
-- [ ] Implementar CRUD completo de Students
+- [ ] Implementar CRUD completo de Professores
+- [ ] Implementar CRUD completo de Alunos
 - [ ] Adicionar sistema de comentários nos posts
 - [ ] Implementar notificações
 - [ ] Adicionar testes unitários e de integração

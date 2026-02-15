@@ -21,7 +21,7 @@ export default function AdminPostsListScreen() {
   const { data: posts, isLoading } = usePosts(1, 50);
   const deletePostMutation = useDeletePost();
 
-  // Guard: Only teachers can access this screen
+  // Proteção: Apenas professores podem acessar esta tela
   React.useEffect(() => {
     if (!isTeacher) {
       Alert.alert('Acesso negado', 'Apenas professores podem acessar esta área.');
@@ -92,7 +92,7 @@ export default function AdminPostsListScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Cabeçalho */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Voltar</Text>
@@ -101,14 +101,14 @@ export default function AdminPostsListScreen() {
         <View style={{ width: 60 }} />
       </View>
 
-      {/* Create Button */}
+      {/* Botão Criar */}
       <View style={styles.createButtonContainer}>
         <TouchableOpacity style={styles.createButton} onPress={handleCreate}>
           <Text style={styles.createButtonText}>+ Novo Post</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Posts List */}
+      {/* Lista de posts */}
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
@@ -119,7 +119,7 @@ export default function AdminPostsListScreen() {
         contentContainerStyle={styles.listContent}
       />
 
-      {/* Loading overlay when deleting */}
+      {/* Overlay de carregamento ao deletar */}
       {deletePostMutation.isPending && (
         <View style={styles.overlay}>
           <ActivityIndicator size="large" color="#fff" />

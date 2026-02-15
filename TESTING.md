@@ -1,620 +1,432 @@
-# Testing and Validation Guide
+# Guia de Testes e Validação
 
-This document provides instructions for testing the EducaMais Mobile application.
+Este documento fornece instruções para testar o aplicativo móvel EducaMais.
 
-## Prerequisites
+## Pré-requisitos
 
-Before testing, ensure you have:
+Antes de começar os testes, certifique-se de ter:
 
-1. **Backend API Running**
-   - The backend should be accessible from your development machine
-   - Note your backend's IP address (e.g., `http://192.168.1.100:3333`)
+1. **API Backend Rodando**
+   - O backend deve estar acessível a partir da sua máquina de desenvolvimento
+   - Anote o endereço IP do backend (ex: `http://192.168.1.100:3333`)
 
-2. **Mobile Development Environment**
-   - Android Studio with Android SDK installed
-   - Android emulator configured and running
-   - OR physical Android device with USB debugging enabled
+2. **Ambiente de Desenvolvimento Mobile**
+   - Android Studio com Android SDK instalado
+   - Emulador Android configurado e rodando
+   - OU dispositivo Android físico com depuração USB habilitada
 
-3. **Environment Variables**
-   - Create `.env` file from `.env.example`
-   - Set `EXPO_PUBLIC_API_URL` to your backend URL
+3. **Variáveis de Ambiente**
+   - Crie o arquivo `.env` a partir do `.env.example`
+   - Configure `EXPO_PUBLIC_API_URL` com a URL do seu backend
 
-## Setup Steps
+## Passos de Configuração
 
-1. **Install Dependencies**
+1. **Instalar Dependências**
    ```bash
    npm install
    ```
 
-2. **Configure Environment**
+2. **Configurar Ambiente**
    ```bash
    cp .env.example .env
    # Edit .env and set EXPO_PUBLIC_API_URL
    ```
 
-3. **Start the Application**
+3. **Iniciar o Aplicativo**
    ```bash
    npx expo start
    ```
 
-4. **Launch on Android**
-   - Press `a` to open in Android emulator
-   - Or scan QR code with Expo Go app on physical device
+4. **Abrir no Android**
+   - Pressione `a` para abrir no emulador Android
+   - Ou escaneie o QR code com o app Expo Go em um dispositivo físico
 
-## Test Cases
+## Casos de Teste
 
-### 1. Authentication Flow
+### 1. Fluxo de Autenticação
 
-#### Test 1.1: Sign Up (New User)
-1. Open the app
-2. Click "Não tem conta? Cadastre-se"
-3. Enter email: `teacher@test.com`
-4. Enter password: `password123`
-5. Click "Cadastre-se"
-6. **Expected**: User is created and redirected to Feed screen
-7. **Verify**: User name appears in header
+#### Teste 1.1: Cadastro de Novo Usuário
+1. Abra o aplicativo
+2. Clique em "Não tem conta? Cadastre-se"
+3. Digite um email válido e senha (mínimo 6 caracteres)
+4. Clique em "Cadastre-se"
+5. **Esperado**: Usuário é criado e redirecionado para a tela de Feed
+6. **Verificar**: Nome do usuário aparece no cabeçalho
 
-#### Test 1.2: Sign In (Existing User)
-1. If logged in, click "Sair" in header
-2. Enter email and password
-3. Click "Entrar"
-4. **Expected**: User is logged in and redirected to Feed screen
-5. **Verify**: 
-   - User name appears in header
-   - Role badge shows (👨‍🏫 Professor or 👨‍🎓 Aluno)
+#### Teste 1.2: Login de Usuário Existente
+1. Se estiver logado, clique em "Sair" no cabeçalho
+2. Digite email e senha
+3. Clique em "Entrar"
+4. **Esperado**: Usuário é autenticado e redirecionado para o Feed
+5. **Verificar**: 
+   - Nome do usuário aparece no cabeçalho
+   - Badge de função mostra (👨‍🏫 Professor ou 👨‍🎓 Aluno)
 
-#### Test 1.3: Session Persistence
-1. Log in as a user
-2. Close the app completely
-3. Reopen the app
-4. **Expected**: User remains logged in (no need to re-enter credentials)
-5. **Verify**: Feed screen is shown immediately
+#### Teste 1.3: Persistência de Sessão
+1. Faça login como um usuário
+2. Feche o aplicativo completamente
+3. Reabra o aplicativo
+4. **Esperado**: Usuário continua logado (não precisa digitar credenciais novamente)
+5. **Verificar**: Tela de Feed é mostrada imediatamente
 
-#### Test 1.4: Invalid Credentials
-1. Enter invalid email or password
-2. Click "Entrar"
-3. **Expected**: Error alert is shown
-4. **Verify**: User remains on login screen
-# Testing Guide - EducaMais Mobile
+**Resultado Esperado**: A sessão é mantida via expo-secure-store.
 
-This guide provides step-by-step instructions for testing the mobile application.
+#### Teste 1.4: Logout
+1. Na tela de Feed, clique em "Sair"
+2. Confirme o logout
+3. **Esperado**: Usuário é deslogado
+4. **Verificar**: Redirecionado para tela de login
+5. **Verificar**: Token de sessão é removido
 
-## Prerequisites
-
-1. Backend API running and accessible
-2. Android Studio with emulator configured (or physical device)
-3. Environment variables configured in `.env`
-
-## Test Scenarios
-
-### 1. Authentication Flow
-
-#### Test 1.1: User Registration
-1. Launch the app
-2. On the login screen, click "Não tem conta? Cadastre-se"
-3. Enter a valid email and password (min 6 characters)
-4. Verify successful registration and automatic login
-5. Verify you're redirected to the Feed screen
-
-**Expected Result**: User is registered, token is stored securely, and Feed screen is displayed.
-
-#### Test 1.2: User Login
-1. If logged in, logout first
-2. Enter valid credentials
-3. Click "Entrar"
-4. Verify redirect to Feed screen
-
-**Expected Result**: User is authenticated and Feed is displayed.
-
-#### Test 1.3: Session Persistence
-1. Login with valid credentials
-2. Close the app completely
-3. Reopen the app
-4. Verify you're still logged in (no login screen shown)
-
-**Expected Result**: Session is persisted via expo-secure-store.
-
-#### Test 1.4: Logout
-1. On Feed screen, click "Sair"
-2. Confirm logout
-3. Verify redirect to login screen
-
-**Expected Result**: User is logged out, session is cleared.
-
-#### Test 1.5: Invalid Credentials
-1. Try to login with invalid email/password
-2. Verify error alert is shown
-
-**Expected Result**: Error message displayed, user remains on login screen.
+#### Teste 1.5: Credenciais Inválidas
+1. Digite email ou senha incorretos
+2. Clique em "Entrar"
+3. **Esperado**: Mensagem de erro é exibida
+4. **Verificar**: Usuário permanece na tela de login
 
 ---
 
-### 2. Posts Feed
+### 2. Feed de Posts
 
-#### Test 2.1: View Posts List
-1. Log in as any user
-2. **Expected**: List of posts is displayed
-3. **Verify**:
-   - Each post shows: title, author, preview, date
-   - Posts are ordered correctly
-   - Smooth scrolling
+#### Teste 2.1: Visualizar Lista de Posts
+1. Faça login como qualquer usuário
+2. **Esperado**: Lista de posts é exibida
+3. **Verificar**:
+   - Cada post mostra: título, autor, prévia do conteúdo, data
+   - Posts estão ordenados corretamente
+   - Rolagem suave
 
-#### Test 2.2: Infinite Scroll
-1. Scroll down to the bottom of the feed
-2. **Expected**: More posts are automatically loaded
-3. **Verify**: Loading indicator appears briefly
-4. Continue scrolling to load more pages
+#### Teste 2.2: Scroll Infinito
+1. Role até o final do feed
+2. **Esperado**: Mais posts são carregados automaticamente
+3. **Verificar**: Indicador de carregamento aparece brevemente
+4. Continue rolando para carregar mais páginas
 
-#### Test 2.3: Pull to Refresh
-1. Pull down from the top of the feed
-2. **Expected**: Refresh animation appears
-3. **Verify**: Posts list is reloaded with latest data
+#### Teste 2.3: Puxar para Atualizar
+1. Puxe para baixo do topo do feed
+2. **Esperado**: Animação de atualização aparece
+3. **Verificar**: Lista de posts é recarregada com os dados mais recentes
 
-#### Test 2.4: Search Posts
-1. Type a search term in the search bar (e.g., "test")
-2. Wait 500ms for debounce
-3. **Expected**: Posts are filtered by search term
-4. **Verify**: Only matching posts are shown
-5. Clear search (tap X)
-6. **Expected**: All posts are shown again
+#### Teste 2.4: Buscar Posts
+1. Digite um termo de busca na barra de pesquisa (ex: "test")
+2. Aguarde 500ms pelo debounce
+3. **Esperado**: Posts são filtrados pelo termo de busca
+4. **Verificar**: Apenas posts correspondentes são mostrados
+5. Limpe a busca (toque no X)
+6. **Esperado**: Todos os posts são mostrados novamente
 
-#### Test 2.5: Empty State
-1. Search for a term with no results (e.g., "xyzabc123")
-2. **Expected**: Empty state is shown with message "Nenhum post encontrado"
+**Resultado Esperado**: Busca funciona com debounce, resultados são filtrados.
 
-#### Test 2.6: Error State
-1. Stop the backend API
-2. Pull to refresh
-3. **Expected**: Error state is shown
-4. Click "Tentar Novamente"
-5. Restart backend and verify retry works
+#### Teste 2.5: Estado Vazio
+1. Busque por um termo sem resultados (ex: "xyzabc123")
+2. **Esperado**: Estado vazio é mostrado com a mensagem "Nenhum post encontrado"
 
-### 3. Post Details
+#### Teste 2.6: Estado de Erro
+1. Pare a API do backend
+2. Puxe para atualizar
+3. **Esperado**: Estado de erro é mostrado
+4. Clique em "Tentar Novamente"
+5. Reinicie o backend e verifique se a tentativa funciona
 
-#### Test 3.1: View Post Details
-1. From the feed, tap on any post
-2. **Expected**: Post detail screen opens
-3. **Verify**:
-   - Full title is shown
-   - Author name and email
-   - Creation date with time
-   - Full content
-   - Post ID and update date (if different)
+**Resultado Esperado**: Estado de erro com opção de tentar novamente funciona.
 
-#### Test 3.2: Navigate Back
-1. On post detail screen, tap "← Voltar"
-2. **Expected**: Return to feed screen
-3. **Verify**: Feed maintains scroll position
+---
 
-#### Test 3.3: Post Not Found
-1. Manually navigate to a non-existent post ID (requires navigation from code)
-2. **Expected**: Error state shown
-3. **Verify**: Error message "Post não encontrado"
+### 3. Detalhes do Post
 
-### 4. Admin Panel (Teacher Only)
+#### Teste 3.1: Visualizar Detalhes do Post
+1. No feed, toque em qualquer post
+2. **Esperado**: Tela de detalhes do post abre
+3. **Verificar**:
+   - Título completo é mostrado
+   - Nome e email do autor
+   - Data de criação com hora
+   - Conteúdo completo
+   - ID do post e data de atualização (se diferente)
 
-#### Test 4.1: Admin Access - Teacher
-1. Log in as a teacher
-2. **Expected**: "⚙️ Administrar Posts" button is visible in feed
-3. Tap the button
-4. **Expected**: Admin posts list screen opens
+**Resultado Esperado**: Todas as informações são exibidas corretamente.
 
-#### Test 4.2: Admin Access - Student
-1. Log in as a student
-2. **Expected**: Admin button is NOT visible
-3. **Verify**: Student cannot access admin features
+#### Teste 3.2: Navegar de Volta
+1. Na tela de detalhes, toque em "← Voltar"
+2. **Esperado**: Retorna para a tela de feed
+3. **Verificar**: Feed mantém a posição de rolagem
 
-#### Test 4.3: Create Post
-1. As teacher, navigate to admin panel
-2. Tap "➕ Novo Post"
-3. Fill in form:
+**Resultado Esperado**: Navegação de volta funciona corretamente.
+
+#### Teste 3.3: Placeholder de Comentários
+1. Role até o final dos detalhes do post
+2. Verifique que o placeholder da seção de comentários é mostrado
+3. Verifique a mensagem: "Sistema de comentários em desenvolvimento"
+
+**Resultado Esperado**: Placeholder de comentários está visível.
+
+#### Teste 3.4: Post Não Encontrado
+1. Navegue manualmente para um ID de post inexistente (requer navegação via código)
+2. **Esperado**: Estado de erro é mostrado
+3. **Verificar**: Mensagem de erro "Post não encontrado"
+
+---
+
+### 4. Painel Admin (Apenas Professor)
+
+#### Teste 4.1: Acesso Admin - Professor
+1. Faça login como professor
+2. **Esperado**: Botão "⚙️ Administrar Posts" está visível no feed
+3. Toque no botão
+4. **Esperado**: Tela de lista de posts admin abre
+
+**Resultado Esperado**: Botão admin visível apenas para professores.
+
+#### Teste 4.2: Acesso Admin - Aluno
+1. Faça login como aluno
+2. **Esperado**: Botão admin NÃO está visível
+3. **Verificar**: Aluno não pode acessar funcionalidades admin
+
+**Resultado Esperado**: Alunos não podem acessar funcionalidades admin.
+
+#### Teste 4.3: Lista de Posts Admin
+1. Faça login como professor
+2. Clique no botão "Admin"
+3. Verifique a lista de posts com botões de editar/excluir
+4. Verifique o botão "+ Novo Post"
+
+**Resultado Esperado**: Lista admin mostra todos os posts com ações.
+
+#### Teste 4.4: Criar Post
+1. No painel admin, toque em "➕ Novo Post"
+2. Deixe o título vazio e tente enviar
+3. Verifique que erro de validação aparece
+4. Preencha com dados válidos:
    - Título: "Test Post"
-   - Descrição: "This is a test description"
-   - Conteúdo: "This is the full content of the test post"
-4. Tap "Criar Post"
-5. **Expected**: Success alert shown
-6. **Verify**: Redirected to admin list
-7. **Verify**: New post appears in the list
+   - Descrição: "Test description"
+   - Conteúdo: "Test content with more than 10 characters"
+5. Toque em "Criar Post"
+6. **Esperado**: Mensagem de sucesso é exibida
+7. **Verificar**: Redirecionado para lista admin
+8. **Verificar**: Novo post aparece na lista
 
-#### Test 4.4: Form Validation - Create
-1. Tap "➕ Novo Post"
-2. Leave fields empty and tap "Criar Post"
-3. **Expected**: Validation errors shown
-4. Fill título with 2 characters
-5. **Expected**: Error "Título deve ter pelo menos 3 caracteres"
-6. Fill conteúdo with 5 characters
-7. **Expected**: Error "Conteúdo deve ter pelo menos 10 caracteres"
+**Resultado Esperado**: Validação funciona, post é criado.
 
-#### Test 4.5: Edit Post
-1. In admin list, tap "✏️ Editar" on a post
-2. **Expected**: Edit screen opens with pre-filled data
-3. Modify the título
-4. Tap "Salvar Alterações"
-5. **Expected**: Success alert shown
-6. **Verify**: Changes are reflected in the list
+#### Teste 4.5: Validação de Formulário - Criar
+1. Toque em "➕ Novo Post"
+2. Deixe os campos vazios e toque em "Criar Post"
+3. **Esperado**: Erros de validação são mostrados
+4. Preencha título com 2 caracteres
+5. **Esperado**: Erro "Título deve ter pelo menos 3 caracteres"
+6. Preencha conteúdo com 5 caracteres
+7. **Esperado**: Erro "Conteúdo deve ter pelo menos 10 caracteres"
+8. Tente criar um post com descrição > 500 caracteres
+9. **Esperado**: Mensagens de erro apropriadas para cada campo
 
-#### Test 4.6: Delete Post
-1. In admin list, tap "🗑️ Excluir"
-2. **Expected**: Confirmation dialog appears
-3. Tap "Cancelar"
-4. **Expected**: Dialog closes, post remains
-5. Tap "🗑️ Excluir" again
-6. Tap "Excluir" in dialog
-7. **Expected**: Post is deleted
-8. **Verify**: Post is removed from list
+**Resultado Esperado**: Todas as validações disparam mensagens de erro corretas.
 
-#### Test 4.7: Cache Invalidation
-1. Create or edit a post in admin
-2. Navigate back to main feed
-3. **Expected**: Changes are immediately visible
-4. **Verify**: No need to manually refresh
+#### Teste 4.6: Editar Post
+1. Na lista admin, toque em "✏️ Editar" em um post
+2. **Esperado**: Tela de edição abre com dados pré-preenchidos
+3. Modifique o título
+4. Toque em "Salvar Alterações"
+5. **Esperado**: Alerta de sucesso é mostrado
+6. **Verificar**: Mudanças são refletidas na lista
 
-### 5. Navigation and State Management
+**Resultado Esperado**: Post é atualizado corretamente.
 
-#### Test 5.1: Deep Navigation
-1. Navigate: Feed → Post Detail → Back → Admin → Create → Cancel
-2. **Expected**: Each navigation works correctly
-3. **Verify**: No crashes or navigation errors
+#### Teste 4.7: Excluir Post
+1. Na lista admin, toque em "🗑️ Excluir"
+2. **Esperado**: Diálogo de confirmação aparece
+3. Toque em "Cancelar"
+4. **Esperado**: Diálogo fecha, post permanece
+5. Toque em "🗑️ Excluir" novamente
+6. Toque em "Excluir" no diálogo
+7. **Esperado**: Post é excluído
+8. **Verificar**: Post é removido da lista
 
-#### Test 5.2: Logout
-1. While on any screen (except login), tap "Sair"
-2. Tap "Sair" in confirmation dialog
-3. **Expected**: User is logged out
-4. **Verify**: Redirected to login screen
-5. **Verify**: Session token is cleared
+**Resultado Esperado**: Confirmação de exclusão funciona, post é removido.
 
-### 6. Role-Based Access Control
-
-#### Test 6.1: Teacher Permissions
-1. Log in as teacher
-2. **Verify**:
-   - Can view feed ✓
-   - Can view post details ✓
-   - Can access admin panel ✓
-   - Can create posts ✓
-   - Can edit posts ✓
-   - Can delete posts ✓
-
-#### Test 6.2: Student Permissions
-1. Log in as student
-2. **Verify**:
-   - Can view feed ✓
-   - Can view post details ✓
-   - Cannot access admin panel ✗
-   - Cannot create posts ✗
-   - Cannot edit posts ✗
-   - Cannot delete posts ✗
-
-## Performance Testing
-
-### Test 7.1: Large Dataset
-1. Create 100+ posts in the backend
-2. Load the feed
-3. **Expected**: Feed loads smoothly
-4. Scroll through the list
-5. **Expected**: Infinite scroll works without lag
-
-### Test 7.2: Network Conditions
-1. Simulate slow network (via Android Studio)
-2. Load feed
-3. **Expected**: Loading states are shown appropriately
-4. Restore network
-5. **Expected**: Data loads successfully
-
-### Test 7.3: Offline Handling
-1. Turn off network completely
-2. Try to load feed
-3. **Expected**: Error state shown
-4. Turn network back on
-5. Tap retry
-6. **Expected**: Data loads successfully
-
-## Known Issues and Limitations
-
-1. **Backend Dependency**: The app requires a running backend API. Ensure `EXPO_PUBLIC_API_URL` is correctly configured.
-
-2. **Android Emulator Network**: On Android emulator, use your machine's local network IP (not `localhost`).
-
-3. **Token Expiration**: If the backend implements token expiration, you may need to log in again after the token expires.
-
-4. **Comments Feature**: Currently a placeholder - will be implemented in a future PR.
-
-5. **Teachers/Students CRUD**: Scaffolded but not implemented - will be added in future PRs.
-
-## Reporting Issues
-
-When reporting issues, please include:
-1. Steps to reproduce
-2. Expected vs actual behavior
-3. Screenshots if applicable
-4. Console logs (from `npx expo start`)
-5. Device/emulator information
-6. Backend API version and status
-
-## Success Criteria
-
-All tests should pass with:
-- ✅ No crashes or unhandled errors
-- ✅ Smooth UI interactions
-- ✅ Proper role-based access control
-- ✅ Data persistence working correctly
-- ✅ Network error handling working
-- ✅ Form validations working
-- ✅ Cache management working correctly
-1. Login as any user
-2. Verify posts are displayed in a list
-3. Verify each post shows: title, author, brief content, date
-
-**Expected Result**: Posts are listed with correct information.
-
-#### Test 2.2: Search Posts
-1. On Feed screen, tap the search bar
-2. Type a search term (e.g., "test")
-3. Wait 500ms (debounce)
-4. Verify filtered results appear
-
-**Expected Result**: Search works with debounce, results are filtered.
-
-#### Test 2.3: Clear Search
-1. After searching, clear the search field
-2. Verify all posts are shown again
-
-**Expected Result**: Full list is restored.
-
-#### Test 2.4: Infinite Scroll
-1. Scroll to the bottom of the posts list
-2. Verify more posts are loaded automatically
-3. Verify loading indicator appears at bottom
-
-**Expected Result**: New posts load on scroll, infinite scroll works.
-
-#### Test 2.5: Pull to Refresh
-1. Pull down from top of list
-2. Verify loading indicator appears
-3. Verify posts are refreshed
-
-**Expected Result**: List refreshes on pull-down gesture.
-
-#### Test 2.6: Empty State
-1. Search for a term that returns no results
-2. Verify empty state is shown with message
-
-**Expected Result**: Empty state displays "Nenhum post encontrado".
+#### Teste 4.8: Invalidação de Cache
+1. Crie ou edite um post no admin
+2. Navegue de volta para o feed principal
+3. **Esperado**: Mudanças são imediatamente visíveis
+4. **Verificar**: Não é necessário atualizar manualmente
 
 ---
 
-### 3. Post Detail
+### 5. Navegação e Gerenciamento de Estado
 
-#### Test 3.1: Navigate to Detail
-1. On Feed screen, tap any post
-2. Verify navigation to detail screen
-3. Verify full post content is displayed
+#### Teste 5.1: Navegação Profunda
+1. Navegue: Feed → Detalhes do Post → Voltar → Admin → Criar → Cancelar
+2. **Esperado**: Cada navegação funciona corretamente
+3. **Verificar**: Sem crashes ou erros de navegação
 
-**Expected Result**: Detail screen shows complete post.
-
-#### Test 3.2: Post Information
-1. On detail screen, verify:
-   - Title
-   - Author name and email
-   - Full content
-   - Creation date
-   - Update date (if different)
-
-**Expected Result**: All information is displayed correctly.
-
-#### Test 3.3: Comments Placeholder
-1. Scroll to bottom of post detail
-2. Verify comments section placeholder is shown
-3. Verify message: "Sistema de comentários em desenvolvimento"
-
-**Expected Result**: Comments placeholder is visible.
-
-#### Test 3.4: Back Navigation
-1. Click "← Voltar" button
-2. Verify return to Feed screen
-
-**Expected Result**: Navigation back works correctly.
+#### Teste 5.2: Logout em Qualquer Tela
+1. Em qualquer tela (exceto login), toque em "Sair"
+2. Toque em "Sair" no diálogo de confirmação
+3. **Esperado**: Usuário é deslogado
+4. **Verificar**: Redirecionado para tela de login
+5. **Verificar**: Token de sessão é removido
 
 ---
 
-### 4. Admin Features (Teacher Only)
+### 6. Controle de Acesso Baseado em Função
 
-#### Test 4.1: Admin Button Visibility
-1. Login as a **teacher** user
-2. Verify "Admin" button is visible in header
-3. Logout and login as a **student** user
-4. Verify "Admin" button is NOT visible
+#### Teste 6.1: Permissões de Professor
+1. Faça login como professor
+2. **Verificar**:
+   - Pode visualizar feed ✓
+   - Pode visualizar detalhes de posts ✓
+   - Pode acessar painel admin ✓
+   - Pode criar posts ✓
+   - Pode editar posts ✓
+   - Pode excluir posts ✓
 
-**Expected Result**: Admin button only visible for teachers.
+**Resultado Esperado**: Professores têm acesso admin completo.
 
-#### Test 4.2: Access Control - Student
-1. Login as a **student**
-2. Try to access admin screens (if possible)
-3. Verify access is denied
+#### Teste 6.2: Permissões de Aluno
+1. Faça login como aluno
+2. **Verificar**:
+   - Pode visualizar feed ✓
+   - Pode visualizar detalhes de posts ✓
+   - NÃO pode acessar painel admin ✗
+   - NÃO pode criar posts ✗
+   - NÃO pode editar posts ✗
+   - NÃO pode excluir posts ✗
 
-**Expected Result**: Students cannot access admin features.
-
-#### Test 4.3: Admin Posts List
-1. Login as a **teacher**
-2. Click "Admin" button
-3. Verify list of posts with edit/delete buttons
-4. Verify "+ Novo Post" button
-
-**Expected Result**: Admin list shows all posts with actions.
-
-#### Test 4.4: Create Post
-1. On admin list, click "+ Novo Post"
-2. Leave title empty and try to submit
-3. Verify validation error appears
-4. Fill valid data:
-   - Title: "Test Post"
-   - Description: "Test description"
-   - Content: "Test content with more than 10 characters"
-5. Click "Criar Post"
-6. Verify success message
-7. Verify new post appears in list
-
-**Expected Result**: Validation works, post is created.
-
-#### Test 4.5: Edit Post
-1. On admin list, click "✏️ Editar" on any post
-2. Verify form is pre-filled with current data
-3. Modify the title
-4. Click "Salvar Alterações"
-5. Verify success message
-6. Verify changes appear in list
-
-**Expected Result**: Post is updated correctly.
-
-#### Test 4.6: Delete Post
-1. On admin list, click "🗑️ Excluir" on any post
-2. Verify confirmation dialog appears
-3. Click "Cancelar" - verify post remains
-4. Click delete again, then "Excluir"
-5. Verify success message
-6. Verify post is removed from list
-
-**Expected Result**: Delete confirmation works, post is removed.
-
-#### Test 4.7: Form Validation
-1. Try to create a post with:
-   - Title < 3 characters
-   - Content < 10 characters
-   - Description > 500 characters
-2. Verify appropriate error messages for each
-
-**Expected Result**: All validations trigger correct error messages.
+**Resultado Esperado**: Alunos têm acesso somente leitura.
 
 ---
 
-### 5. Role-Based Access
+## Testes de Performance
 
-#### Test 5.1: Teacher Role
-1. Login as teacher
-2. Verify can access admin features
-3. Verify can create/edit/delete posts
+### Teste 7.1: Dataset Grande
+1. Crie 100+ posts no backend
+2. Carregue o feed
+3. **Esperado**: Feed carrega suavemente
+4. Role pela lista
+5. **Esperado**: Scroll infinito funciona sem travamentos
 
-**Expected Result**: Teachers have full admin access.
+### Teste 7.2: Condições de Rede
+1. Simule rede lenta (via Android Studio)
+2. Carregue o feed
+3. **Esperado**: Estados de carregamento são mostrados apropriadamente
+4. Restaure a rede
+5. **Esperado**: Dados carregam com sucesso
 
-#### Test 5.2: Student Role
-1. Login as student
-2. Verify can view feed
-3. Verify can view post details
-4. Verify CANNOT access admin features
+### Teste 7.3: Debounce da Busca
+1. Digite rapidamente no campo de busca
+2. Verifique que a busca só é acionada após 500ms sem digitação
 
-**Expected Result**: Students have read-only access.
+**Resultado Esperado**: Debounce previne chamadas excessivas à API.
 
----
+### Teste 7.4: Comportamento do Cache
+1. Visualize um post em detalhes
+2. Volte para a lista
+3. Visualize o mesmo post novamente
+4. Verifique que carrega do cache (instantâneo)
 
-### 6. Error Handling
+**Resultado Esperado**: Cache do React Query funciona corretamente.
 
-#### Test 6.1: Network Error
-1. Disconnect from network
-2. Try to load posts
-3. Verify error state is shown
-4. Reconnect and click "Tentar novamente"
-5. Verify posts load
-
-**Expected Result**: Error state with retry option works.
-
-#### Test 6.2: 401 Unauthorized
-1. Manually invalidate token (or wait for expiration)
-2. Try to perform an action
-3. Verify automatic logout occurs
-
-**Expected Result**: Auto-logout on 401.
-
----
-
-## Performance Tests
-
-### Test P.1: Search Debounce
-1. Type quickly in search field
-2. Verify search only triggers after 500ms of no typing
-
-**Expected Result**: Debounce prevents excessive API calls.
-
-### Test P.2: Cache Behavior
-1. View a post detail
-2. Go back to list
-3. View the same post again
-4. Verify it loads from cache (instant)
-
-**Expected Result**: React Query cache works correctly.
+### Teste 7.5: Tratamento de Offline
+1. Desligue a rede completamente
+2. Tente carregar o feed
+3. **Esperado**: Estado de erro é mostrado
+4. Ligue a rede novamente
+5. Toque em tentar novamente
+6. **Esperado**: Dados carregam com sucesso
 
 ---
 
-## Accessibility Tests
+## Testes de Acessibilidade
 
-### Test A.1: Screen Reader
-1. Enable TalkBack (Android) or VoiceOver (iOS)
-2. Navigate through screens
-3. Verify all elements are properly labeled
+### Teste A.1: Leitor de Tela
+1. Habilite TalkBack (Android) ou VoiceOver (iOS)
+2. Navegue pelas telas
+3. Verifique que todos os elementos têm labels apropriadas
 
-**Expected Result**: All interactive elements are accessible.
+**Resultado Esperado**: Todos os elementos interativos são acessíveis.
 
 ---
 
-## Test Checklist
+## Checklist de Testes
 
-- [ ] Authentication: Registration, Login, Logout, Persistence
-- [ ] Feed: List, Search, Infinite Scroll, Pull-to-Refresh
-- [ ] Detail: Navigation, Full Content Display
-- [ ] Admin (Teacher): List, Create, Edit, Delete
-- [ ] Admin (Student): Access Denied
-- [ ] Validation: All forms validate correctly
-- [ ] Error Handling: Network errors, 401
+- [ ] Autenticação: Cadastro, Login, Logout, Persistência
+- [ ] Feed: Lista, Busca, Scroll Infinito, Puxar para Atualizar
+- [ ] Detalhes: Navegação, Exibição de Conteúdo Completo
+- [ ] Admin (Professor): Lista, Criar, Editar, Excluir
+- [ ] Admin (Aluno): Acesso Negado
+- [ ] Validação: Todos os formulários validam corretamente
+- [ ] Tratamento de Erros: Erros de rede, 401
 - [ ] Performance: Debounce, Cache
-- [ ] Security: Token storage, Role-based access
+- [ ] Segurança: Armazenamento de token, Acesso baseado em função
 
 ---
 
-## Bug Report Template
+## Template de Relatório de Bug
 
-If you find a bug during testing, please report it with:
+Se você encontrar um bug durante os testes, por favor reporte com:
 
 ```markdown
-### Bug: [Short Description]
+### Bug: [Descrição Curta]
 
-**Steps to Reproduce:**
-1. Step 1
-2. Step 2
-3. Step 3
+**Passos para Reproduzir:**
+1. Passo 1
+2. Passo 2
+3. Passo 3
 
-**Expected Behavior:**
-[What should happen]
+**Comportamento Esperado:**
+[O que deveria acontecer]
 
-**Actual Behavior:**
-[What actually happened]
+**Comportamento Real:**
+[O que realmente aconteceu]
 
-**Environment:**
-- OS: [Android/iOS version]
-- Device: [Emulator/Physical device model]
-- App Version: 1.0.0
+**Ambiente:**
+- SO: [Versão Android/iOS]
+- Dispositivo: [Modelo do emulador/dispositivo físico]
+- Versão do App: 1.0.0
 
 **Screenshots:**
-[If applicable]
+[Se aplicável]
 
 **Logs:**
-[Console errors, if any]
+[Erros do console, se houver]
 ```
 
 ---
 
-## Notes for Testers
+## Notas para Testadores
 
-1. **Backend Connection**: Ensure `EXPO_PUBLIC_API_URL` points to a running backend
-2. **Test Users**: You may need to create test users with different roles
-3. **Data**: Some tests require existing posts in the database
-4. **Reset**: To reset the app completely, clear app data or uninstall/reinstall
+1. **Conexão com Backend**: Certifique-se de que `EXPO_PUBLIC_API_URL` aponta para um backend rodando
+2. **Usuários de Teste**: Você pode precisar criar usuários de teste com diferentes funções
+3. **Dados**: Alguns testes requerem posts existentes no banco de dados
+4. **Resetar**: Para resetar o app completamente, limpe os dados do app ou desinstale/reinstale
 
 ---
 
-## Known Limitations (Current PR)
+## Limitações Conhecidas
 
-1. Comments feature is a placeholder (to be implemented)
-2. Teachers/Students CRUD not implemented (scaffolds only)
-3. No image upload for posts
-4. No notifications
+1. **Dependência do Backend**: O app requer uma API backend rodando. Certifique-se de que `EXPO_PUBLIC_API_URL` está configurado corretamente.
 
-These will be addressed in future PRs.
+2. **Rede do Emulador Android**: No emulador Android, use o IP da rede local da sua máquina (não `localhost`).
+
+3. **Expiração de Token**: Se o backend implementar expiração de token, você pode precisar fazer login novamente após o token expirar.
+
+4. **Funcionalidade de Comentários**: Atualmente é um placeholder - será implementado em um PR futuro.
+
+5. **CRUD de Professores/Alunos**: Estrutura criada mas não implementada - será adicionado em PRs futuros.
+
+6. **Upload de Imagens**: Não implementado para posts.
+
+7. **Notificações**: Não implementadas.
+
+Estas funcionalidades serão abordadas em PRs futuros.
+
+---
+
+## Critérios de Sucesso
+
+Todos os testes devem passar com:
+- ✅ Sem crashes ou erros não tratados
+- ✅ Interações de UI suaves
+- ✅ Controle de acesso baseado em função funcionando
+- ✅ Persistência de dados funcionando corretamente
+- ✅ Tratamento de erros de rede funcionando
+- ✅ Validações de formulário funcionando
+- ✅ Gerenciamento de cache funcionando corretamente

@@ -30,7 +30,7 @@ export default function Login() {
     try {
       setIsLoading(true);
       await signIn(email, password);
-      // Navegar para Home após login bem-sucedido
+      // Navega para Home após login bem-sucedido
       navigation.navigate('screens/Home/index', { userName: email });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer login';

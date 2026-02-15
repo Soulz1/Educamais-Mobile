@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verificar sessão ao iniciar o app
+  // Verifica a sessão quando o app inicia
   useEffect(() => {
     checkSession();
   }, []);
@@ -37,12 +37,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       const session = await authService.getSession();
-      console.log('🔍 CheckSession result:', session); // DEBUG
+      console.log('🔍 Resultado CheckSession:', session); // DEBUG
       if (session) {
-        console.log('✅ User restored from session:', session.user.email);
+        console.log('✅ Usuário restaurado da sessão:', session.user.email);
         setUser(session.user);
       } else {
-        console.log('❌ No session found');
+        console.log('❌ Nenhuma sessão encontrada');
       }
     } catch (error) {
       console.error('Erro ao verificar sessão:', error);
@@ -82,10 +82,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Helper to check if user is a teacher
+  // Verifica se o usuário é professor
   const isTeacher = user?.appRole?.toLowerCase() === 'teacher' || user?.role === UserRole.TEACHER;
   
-  // Helper to check if user is a student
+  // Verifica se o usuário é aluno
   const isStudent = user?.appRole?.toLowerCase() === 'student' || user?.role === UserRole.STUDENT;
 
   const value: AuthContextType = {

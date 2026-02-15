@@ -127,7 +127,7 @@ function AdminPostsList() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Cabeçalho */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -139,7 +139,7 @@ function AdminPostsList() {
         <View style={styles.placeholder} />
       </View>
 
-      {/* Create Button */}
+      {/* Botão Criar */}
       <View style={styles.createButtonContainer}>
         <TouchableOpacity
           style={styles.createButton}
@@ -149,7 +149,7 @@ function AdminPostsList() {
         </TouchableOpacity>
       </View>
 
-      {/* Posts List */}
+      {/* Lista de Posts */}
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id.toString()}
